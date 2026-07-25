@@ -1,0 +1,1965 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Baked Dynamic Activity Tracker</title>
+<style>
+:root{--bg:#101114;--bg2:#17191e;--panel:#1d2026;--panel2:#252a31;--text:#f0eee9;--muted:#a9adb6;--gold:#438acb;--gold2:#285a8a;--line:#343a43;--daily:#4a9a68;--weekly:#5b83c4;--biweekly:#8a6bc1;--monthly:#c88a50;--event:#b35f70;--heroGlow:rgba(67,138,203,.16);--panelGlow:rgba(240,238,233,.045);--taskTint:rgba(240,238,233,.025);--taskHover:rgba(67,138,203,.08)}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 20% -10%,rgba(201,161,90,.1),transparent 34%),linear-gradient(var(--bg),var(--bg2));color:var(--text);font:15px/1.45 system-ui,Segoe UI,Arial,sans-serif}body.noanim *{transition:none!important;animation:none!important}.wrap{max-width:1160px;margin:auto;padding:28px 18px 60px}.hero{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}.hero h1{font:600 clamp(34px,5vw,58px)/1.02 Georgia,serif;margin:0;color:#f5e6bd;text-shadow:0 2px 20px rgba(201,161,90,.14)}.sub{color:var(--muted);margin-top:8px}.actions,.controls,.foot{display:flex;gap:8px;flex-wrap:wrap}.btn{background:linear-gradient(#2a302f,#202624);border:1px solid var(--gold2);color:var(--text);border-radius:9px;padding:9px 12px;cursor:pointer;transition:.18s}.btn:hover{transform:translateY(-1px);border-color:var(--gold)}.btn.primary{background:linear-gradient(#70562a,#4f3c20);border-color:var(--gold);color:#fff4d3}.dashboard{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin:20px 0}.card,.cat{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 28px rgba(0,0,0,.38)}.card{padding:16px}.card h3,.cat h2{font-family:Georgia,serif;color:#ead7a6;margin:0}.bar{height:12px;background:#101417;border:1px solid #312c24;border-radius:99px;overflow:hidden}.bar div{height:100%;background:linear-gradient(90deg,#816532,var(--gold));transition:.3s}.stat{display:flex;justify-content:space-between;color:var(--muted);margin-top:8px}.resetgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.resetstatus{display:block;margin-top:4px;font-size:11px;color:var(--muted)}.resethistory{margin-top:10px}.historyrow{display:grid;grid-template-columns:minmax(120px,1fr) auto;gap:10px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;margin:6px 0;background:var(--taskTint)}.historyrow strong{display:block}.historyrow small{color:var(--muted)}.historytime{color:var(--muted);font-size:var(--help-font-size);line-height:var(--help-line-height);text-align:right;white-space:nowrap}.chip.soon{border-color:var(--gold);box-shadow:0 0 0 1px color-mix(in srgb,var(--gold) 25%,transparent)}.tasks.dropzone{outline:2px dashed var(--gold);outline-offset:-4px;background:color-mix(in srgb,var(--gold) 7%,var(--panel))}.task.drop-before{box-shadow:0 -3px 0 var(--gold)}.task.drop-after{box-shadow:0 3px 0 var(--gold)}.draghint{font-size:11px;color:var(--muted);padding:0 12px 8px}.eventstatus{display:inline-flex;align-items:center;gap:5px;margin-left:6px;padding:2px 7px;border:1px solid var(--line);border-radius:999px;font-size:11px;color:var(--muted)}.eventstatus.ending{border-color:var(--gold);color:var(--gold)}.eventstatus.ended{border-color:var(--event);color:#e7a8b4}.eventprompt{display:flex;align-items:center;gap:10px;margin:8px 12px 10px;padding:10px 12px;border:1px solid var(--event);border-radius:10px;background:color-mix(in srgb,var(--event) 8%,var(--panel2))}.eventprompt span{flex:1}.eventprompt strong{display:block;color:var(--text)}.chip{background:var(--panel2);border:1px solid #343d40;border-radius:10px;padding:9px}.jumpchip{cursor:pointer;transition:.18s transform,.18s border-color,.18s background,.18s box-shadow}.jumpchip:hover{transform:translateY(-2px);border-color:var(--gold);background:rgba(255,255,255,.05);box-shadow:0 6px 18px rgba(0,0,0,.22)}.jumpchip:active{transform:translateY(0)}.chip b{display:block;color:#ead7a6;font-size:13px}.controls{margin:18px 0}.search{flex:1;min-width:240px;background:#101518;border:1px solid #41494b;border-radius:10px;color:var(--text);padding:11px 13px}.cat{overflow:hidden;margin:12px 0}.head{display:flex;gap:10px;align-items:center;padding:14px 15px;cursor:pointer;background:linear-gradient(90deg,rgba(255,255,255,.035),transparent)}.stripe{width:5px;align-self:stretch;border-radius:9px}.daily .stripe{background:var(--daily)}.weekly .stripe{background:var(--weekly)}.biweekly .stripe{background:var(--biweekly)}.monthly .stripe{background:var(--monthly)}.event .stripe{background:var(--event)}.head h2{font-size:22px;flex:1}.meta{color:var(--muted);font-size:var(--help-font-size)}.chev{transition:.2s}.collapsed .chev{transform:rotate(-90deg)}.body{max-height:5000px;opacity:1;transition:max-height .28s,opacity .18s}.collapsed .body{max-height:0;opacity:0;pointer-events:none}.tasks{padding:8px}.task{display:grid;grid-template-columns:24px 28px minmax(0,1fr);column-gap:10px;align-items:start;min-height:52px;padding:8px 10px;border:1px solid transparent;border-radius:10px;margin:5px 0;background:var(--taskTint);transition:.17s}.taskcontent{min-width:0}.taskline{display:flex;align-items:center;gap:10px;min-height:38px}.tasktitle{min-width:0;flex:1;display:flex;align-items:center;flex-wrap:wrap;gap:5px}.tasktitle .badges{margin-left:2px}.taskdetails{padding-top:2px}.task:hover{background:rgba(255,255,255,.04);border-color:#3e4443}.task.dragging{opacity:.45}.handle{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;color:#746d5d;font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center;height:36px}.chk{width:24px;height:24px;accent-color:var(--gold);margin:6px 0 0 0;align-self:start}.done .name{text-decoration:line-through;color:#8d897e}.badges{display:inline-flex;gap:5px;margin-left:0}.badge{font-size:11px;border:1px solid #695737;border-radius:99px;padding:1px 6px;color:#dbc48f}.counter{margin-top:4px}.counter input{width:54px;background:#111619;border:1px solid #404749;border-radius:7px;color:var(--text);padding:4px 6px}.taskactions{display:flex;gap:6px;opacity:.58;align-items:center;justify-content:flex-end;white-space:nowrap;height:38px;flex:0 0 auto}.task:hover .taskactions{opacity:1}.icon{border:0;background:transparent;color:#c5b895;padding:0;cursor:pointer;border-radius:8px;width:38px;height:38px;min-width:38px;min-height:38px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 38px;transition:.15s background,.15s color,.15s transform}.icon:hover{background:#343a3a;color:#fff0c7}.icon:active{transform:scale(.94)}.icon svg{width:21px;height:21px;display:block;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.icon.pin.active{color:var(--gold)}.icon.pin.active svg .pin-body{fill:currentColor}.icon.pin:not(.active) svg .pin-body{fill:none}.icon.important.active{color:var(--gold)}.icon.important.active svg{fill:currentColor}.icon.important:not(.active) svg{fill:none}.foot{padding:10px 12px 13px;border-top:1px solid #302b23}.hidden{display:none!important}.feature-hidden{display:none!important}.footer{position:fixed;right:10px;bottom:6px;color:#746d60;font-size:11px}.themecards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}.themecard{border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:12px;cursor:pointer;transition:.18s transform,.18s border-color,.18s box-shadow;position:relative}.themecard:hover{transform:translateY(-1px);border-color:var(--gold)}.themecard.selected{border-color:var(--gold);box-shadow:0 0 0 2px color-mix(in srgb,var(--gold) 28%,transparent)}.themecard strong{display:block;font-family:Georgia,serif;margin-bottom:4px}.themecard small{color:var(--muted)}.swatches{display:flex;gap:5px;margin-top:9px}.swatch{width:19px;height:19px;border-radius:50%;border:1px solid rgba(255,255,255,.14)}.categorytools{display:flex;gap:4px;align-items:center}.cattool{border:0;background:transparent;color:#c5b895;padding:0;width:34px;height:34px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.cattool:hover{background:#343a3a;color:#fff0c7}.cattool svg{width:19px;height:19px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.archivepanel{margin:18px 0;background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 28px rgba(0,0,0,.38);overflow:hidden}.archivehead{display:flex;align-items:center;gap:10px;padding:14px 15px;background:linear-gradient(90deg,rgba(255,255,255,.035),transparent)}.archivehead h3{font:600 20px Georgia,serif;color:#ead7a6;margin:0;flex:1}.archivebody{padding:8px}.archiverow{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid #3e4443;border-radius:10px;margin:5px 0;background:var(--taskTint)}.archivename{flex:1;min-width:0}.archivename strong{display:block}.archivename small{color:var(--muted)}.back{position:fixed;inset:0;background:rgba(0,0,0,.68);display:flex;align-items:center;justify-content:center;padding:18px;z-index:50}.modal{width:min(650px,100%);max-height:calc(100dvh - 36px);background:var(--panel);border:1px solid var(--gold2);border-radius:15px;box-shadow:0 30px 80px #000;padding:18px;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain}.modal h2{font-family:Georgia,serif;margin:0 0 12px;flex:0 0 auto}.field{margin:10px 0}.field label{display:block;color:#cbbf9f;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;background:#101518;color:var(--text);border:1px solid #41484a;border-radius:9px;padding:9px}.row{display:flex;gap:9px}.row>*{flex:1}.modalactions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}.cmd.sel,.cmd:hover{background:#2b332f}.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#282f2d;border:1px solid #675434;padding:10px 14px;border-radius:9px;z-index:70}
+
+
+@media(max-width:800px){.dashboard{grid-template-columns:1fr}.hero{display:block}.actions{margin-top:14px}.task{grid-template-columns:22px 26px minmax(0,1fr);column-gap:7px;padding:8px}.taskline{gap:6px}.taskactions{gap:3px;opacity:.9}.icon{width:36px;height:36px;min-width:36px;min-height:36px;flex-basis:36px}.icon svg{width:20px;height:20px}}
+@media(max-width:560px){.task{grid-template-columns:18px 24px minmax(0,1fr);column-gap:5px;padding-left:6px;padding-right:6px}.handle{font-size:17px}.chk{width:22px;height:22px;margin-top:7px}.taskline{gap:4px}.taskactions{gap:2px}.icon{width:34px;height:34px;min-width:34px;min-height:34px;flex-basis:34px}.icon svg{width:19px;height:19px}.tasktitle{gap:3px}.badges{display:flex;flex-wrap:wrap}}
+.modal-scroll{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-right:3px}
+.modalactions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px;flex:0 0 auto;position:sticky;bottom:0;background:var(--panel);padding-top:12px;padding-bottom:2px}
+
+
+
+@media(max-width:800px){
+ .modalback{align-items:stretch;padding:10px}
+ .modal{width:100%;max-height:calc(100dvh - 20px);padding:14px}
+ .modalactions{margin-left:-14px;margin-right:-14px;margin-bottom:-14px;padding:10px 14px 14px;box-shadow:0 -10px 20px rgba(0,0,0,.18)}
+}
+@media(max-width:420px){
+ .modalback{padding:6px}
+ .modal{max-height:calc(100dvh - 12px);padding:12px}
+ .modalactions{margin-left:-12px;margin-right:-12px;margin-bottom:-12px;padding:10px 12px 12px}
+}
+
+@media(max-width:560px){
+ .wrap{padding-left:10px;padding-right:10px}
+ .taskline{align-items:flex-start}
+ .taskactions{gap:1px;flex-wrap:nowrap}
+ .icon{width:32px;height:32px;min-width:32px;min-height:32px;flex-basis:32px}
+ .icon svg{width:18px;height:18px}
+ .tasktitle .name{font-size:15px}
+ .row{flex-direction:column;gap:0}
+ .modal .field input,.modal .field select,.modal .field textarea{font-size:16px}
+}
+@media(max-width:400px){
+ .task{grid-template-columns:15px 22px minmax(0,1fr);column-gap:4px}
+ .handle{font-size:15px}
+ .taskactions{gap:0}
+ .icon{width:29px;height:31px;min-width:29px;min-height:31px;flex-basis:29px}
+ .icon svg{width:17px;height:17px}
+ .badge{font-size:9px;padding:1px 4px}
+}
+
+.task.touch-dragging{opacity:.48;outline:1px solid var(--gold)}
+.touch-drag-ghost{position:fixed;z-index:1000;pointer-events:none;max-width:min(420px,80vw);padding:9px 12px;border:1px solid var(--gold);border-radius:9px;background:var(--panel2);color:var(--text);box-shadow:0 12px 30px rgba(0,0,0,.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transform:translate(12px,12px)}
+@media(pointer:coarse){
+ .handle{cursor:grab;min-width:24px;min-height:36px}
+}
+.storagewarn{margin:0 0 14px;padding:10px 12px;border:1px solid var(--monthly);border-radius:10px;background:color-mix(in srgb,var(--monthly) 8%,var(--panel));color:var(--muted);font-size:12px}.storagewarn strong{color:var(--text)}
+html.bdat-modal-open,body.bdat-modal-open{overflow:hidden!important;overscroll-behavior:none}
+.back{overscroll-behavior:contain}
+
+/* Preview 3 stabilization */
+.modal,.modal *{box-sizing:border-box}
+.back{padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));overflow:hidden}
+.modal{width:min(650px,calc(100vw - 20px));max-width:100%;max-height:calc(100dvh - 20px);margin:auto}
+.modal-scroll{min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain}
+html.bdat-modal-open,body.bdat-modal-open{overflow:hidden!important;overscroll-behavior:none}
+@media(max-width:560px){
+ .back{padding:max(6px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
+ .modal{width:100%;max-width:100%;max-height:calc(100dvh - 12px);margin:auto}
+ .modalactions{flex-wrap:wrap}
+ .modalactions .btn{min-height:44px}
+}
+
+.modal input,.modal select,.modal textarea{
+  max-width:100%;
+  min-width:0;
+}
+.modal input:focus,.modal select:focus,.modal textarea:focus{
+  outline:none!important;
+  border-color:var(--gold)!important;
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--gold) 55%,transparent) inset,
+             0 0 0 1px color-mix(in srgb,var(--gold) 30%,transparent)!important;
+}
+@media(max-width:560px){
+ .modal .field{padding-left:2px;padding-right:2px}
+}
+
+
+
+.catnamewrap{display:inline-flex;align-items:flex-start;gap:7px;min-width:0}
+.catstreak{display:inline-flex;align-items:center;gap:2.5px;position:relative;top:-3px;font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:500;letter-spacing:.01em;color:var(--muted);white-space:nowrap;line-height:1.1}
+.catstreak 
+.catstreak .firefallback{display:inline-flex;width:24px;height:24px;align-items:center;justify-content:center}
+.catstreak .firefallback svg{width:15px;height:15px}
+.catstreak.active{color:var(--text)}
+@media(max-width:560px){
+ .catnamewrap{gap:5px}
+ .catstreak{top:-2px;font-size:9px}
+ .catstreak 
+}
+
+.catnamewrap{align-items:center}
+.catgem{width:22px;height:28px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 22px;filter:drop-shadow(0 0 4px rgba(0,0,0,.35))}
+.catgem svg{width:20px;height:26px;display:block}
+@media(max-width:560px){
+ .catgem{width:20px;height:25px;flex-basis:20px}
+ .catgem svg{width:18px;height:23px}
+}
+
+.streak-option{display:flex;align-items:center;justify-content:flex-start;gap:16px;min-height:40px;padding:0;margin:0;color:var(--text);font-size:15px;font-weight:500;white-space:nowrap}
+.streak-option input[type='checkbox']{width:20px;height:20px;flex:0 0 20px;margin:0;align-self:center;accent-color:var(--gold)}
+.streak-option-text{display:flex;align-items:center;align-self:center;min-height:20px;line-height:20px;margin:0;padding:0;color:var(--text);white-space:nowrap}
+.streak-help{color:var(--muted);font-size:var(--help-font-size);margin-top:5px;line-height:var(--help-line-height)}
+#catStreakField[hidden]{display:none!important}
+body[data-theme='nao']{--bg:#101114;--bg2:#17191e;--panel:#1d2026;--panel2:#252a31;--text:#f0eee9;--muted:#a9adb6;--gold:#438acb;--gold2:#285a8a;--line:#343a43;--heroGlow:rgba(67,138,203,.16);--panelGlow:rgba(240,238,233,.045);--taskTint:rgba(240,238,233,.025);--taskHover:rgba(67,138,203,.08)}
+body[data-theme='cowenna']{--bg:#120f0e;--bg2:#1c1514;--panel:#2a1d1b;--panel2:#352522;--text:#f2e7df;--muted:#b8a69d;--gold:#a74338;--gold2:#713029;--line:#4a342f;--heroGlow:rgba(167,67,56,.17);--panelGlow:rgba(125,199,233,.045);--taskTint:rgba(242,231,223,.023);--taskHover:rgba(167,67,56,.08)}
+body[data-theme='eochaid']{--bg:#0c1218;--bg2:#121c27;--panel:#18263a;--panel2:#21324a;--text:#f2f0e9;--muted:#a9b7c4;--gold:#55bcc4;--gold2:#347a80;--line:#344a63;--heroGlow:rgba(85,188,196,.18);--panelGlow:rgba(38,61,115,.06);--taskTint:rgba(242,240,233,.023);--taskHover:rgba(85,188,196,.08)}
+body[data-theme='loiscneach']{--bg:#0e1317;--bg2:#151d22;--panel:#202930;--panel2:#2a353d;--text:#f1f4f5;--muted:#a8b2b8;--gold:#82b6cf;--gold2:#52788b;--line:#40505a;--heroGlow:rgba(130,182,207,.17);--panelGlow:rgba(241,244,245,.045);--taskTint:rgba(241,244,245,.022);--taskHover:rgba(130,182,207,.08)}
+body[data-theme='rowan']{--bg:#120f18;--bg2:#1c1725;--panel:#292036;--panel2:#352944;--text:#f0eef4;--muted:#b2a8bc;--gold:#b27bd1;--gold2:#754d90;--line:#4b3a5c;--heroGlow:rgba(178,123,209,.18);--panelGlow:rgba(240,238,244,.04);--taskTint:rgba(240,238,244,.022);--taskHover:rgba(178,123,209,.08)}
+body[data-theme='iolar']{--bg:#111414;--bg2:#191d1c;--panel:#232927;--panel2:#2d3431;--text:#eeeDE7;--muted:#afb4aa;--gold:#8f9e7e;--gold2:#5c6850;--line:#414944;--heroGlow:rgba(143,158,126,.16);--panelGlow:rgba(227,227,222,.045);--taskTint:rgba(227,227,222,.023);--taskHover:rgba(143,158,126,.08)}
+body[data-theme='matthias']{--bg:#0d1014;--bg2:#141922;--panel:#1e2732;--panel2:#283443;--text:#e8ebed;--muted:#a6afb8;--gold:#6386ad;--gold2:#3e5875;--line:#394858;--heroGlow:rgba(99,134,173,.17);--panelGlow:rgba(212,216,219,.04);--taskTint:rgba(212,216,219,.022);--taskHover:rgba(99,134,173,.08)}
+body[data-theme='micheil']{--bg:#111313;--bg2:#191d1f;--panel:#242b2e;--panel2:#30383c;--text:#ece3d2;--muted:#afa99e;--gold:#a36d4f;--gold2:#694633;--line:#414a4e;--heroGlow:rgba(163,109,79,.17);--panelGlow:rgba(82,108,122,.05);--taskTint:rgba(236,227,210,.022);--taskHover:rgba(163,109,79,.08)}
+body[data-theme='taise']{--bg:#0e1511;--bg2:#162019;--panel:#223329;--panel2:#2c4034;--text:#eaede4;--muted:#acb5a8;--gold:#8ea16c;--gold2:#586743;--line:#3f5547;--heroGlow:rgba(142,161,108,.17);--panelGlow:rgba(103,72,95,.05);--taskTint:rgba(234,237,228,.022);--taskHover:rgba(142,161,108,.08)}
+body[data-theme='glora']{--bg:#140f17;--bg2:#201724;--panel:#30213a;--panel2:#3d2a49;--text:#f0e1e8;--muted:#b9a8b3;--gold:#c66b91;--gold2:#80455e;--line:#56405e;--heroGlow:rgba(198,107,145,.18);--panelGlow:rgba(240,225,232,.045);--taskTint:rgba(240,225,232,.023);--taskHover:rgba(198,107,145,.08)}
+body[data-theme='ater']{--bg:#100d0d;--bg2:#191313;--panel:#251b19;--panel2:#30221e;--text:#eee3dc;--muted:#b5a49b;--gold:#d96b32;--gold2:#8d431f;--line:#49332d;--heroGlow:rgba(217,107,50,.19);--panelGlow:rgba(143,53,46,.055);--taskTint:rgba(238,227,220,.021);--taskHover:rgba(217,107,50,.085)}
+.theme-nao .swatch:nth-child(1){background:#111216}
+.theme-nao .swatch:nth-child(2){background:#EEEAE5}
+.theme-nao .swatch:nth-child(3){background:#3D8DCC}
+.theme-cowenna .swatch:nth-child(1){background:#30211E}
+.theme-cowenna .swatch:nth-child(2){background:#A74338}
+.theme-cowenna .swatch:nth-child(3){background:#7DC7E9}
+.theme-eochaid .swatch:nth-child(1){background:#55BCC4}
+.theme-eochaid .swatch:nth-child(2){background:#263D73}
+.theme-eochaid .swatch:nth-child(3){background:#F2F0E9}
+.theme-loiscneach .swatch:nth-child(1){background:#82B6CF}
+.theme-loiscneach .swatch:nth-child(2){background:#2F3942}
+.theme-loiscneach .swatch:nth-child(3){background:#F1F4F5}
+.theme-rowan .swatch:nth-child(1){background:#6C4B8E}
+.theme-rowan .swatch:nth-child(2){background:#F0EEF4}
+.theme-rowan .swatch:nth-child(3){background:#B27BD1}
+.theme-iolar .swatch:nth-child(1){background:#E3E3DE}
+.theme-iolar .swatch:nth-child(2){background:#77836B}
+.theme-iolar .swatch:nth-child(3){background:#6C747C}
+.theme-matthias .swatch:nth-child(1){background:#3E5875}
+.theme-matthias .swatch:nth-child(2){background:#D4D8DB}
+.theme-matthias .swatch:nth-child(3){background:#161A20}
+.theme-micheil .swatch:nth-child(1){background:#8B5B42}
+.theme-micheil .swatch:nth-child(2){background:#526C7A}
+.theme-micheil .swatch:nth-child(3){background:#ECE3D2}
+.theme-taise .swatch:nth-child(1){background:#315842}
+.theme-taise .swatch:nth-child(2){background:#8EA16C}
+.theme-taise .swatch:nth-child(3){background:#67485F}
+.theme-glora .swatch:nth-child(1){background:#654276}
+.theme-glora .swatch:nth-child(2){background:#C66B91}
+.theme-glora .swatch:nth-child(3){background:#F0E1E8}
+.theme-ater .swatch:nth-child(1){background:#1A1717}
+.theme-ater .swatch:nth-child(2){background:#D96B32}
+.theme-ater .swatch:nth-child(3){background:#8F352E}
+
+/* Stabilization: theme-safe surfaces */
+.btn{color:var(--text)}
+.modal input,.modal select,.modal textarea{background:var(--bg2);color:var(--text);border-color:var(--line)}
+.modal input::placeholder,.modal textarea::placeholder{color:var(--muted)}
+.modalactions{background:var(--panel)}
+.theme-card{background:var(--panel2);color:var(--text)}
+.theme-card small{color:var(--muted)}
+
+/* Preview 3.14 alignment corrections */
+.task .main{align-items:center}
+.task .check{align-self:center}
+.task .taskbody{align-self:center;display:flex;flex-direction:column;justify-content:center}
+.task .tasktitle{display:flex;align-items:center;min-height:24px;line-height:1.25;margin:0}
+
+/* Preview 3.15: definitive checkbox/text alignment */
+#catStreakField .streak-option{
+ display:grid!important;
+ grid-template-columns:20px max-content!important;
+ column-gap:20px!important;
+ align-items:center!important;
+ justify-content:start!important;
+ min-height:40px!important;
+ margin:0!important;
+ padding:0!important;
+ width:max-content!important;
+}
+#catStreakField .streak-option input[type='checkbox']{
+ display:block!important;
+ grid-column:1!important;
+ width:20px!important;
+ height:20px!important;
+ min-width:20px!important;
+ margin:0!important;
+ padding:0!important;
+ align-self:center!important;
+ justify-self:center!important;
+}
+#catStreakField .streak-option .streak-option-text{
+ display:flex!important;
+ grid-column:2!important;
+ align-items:center!important;
+ align-self:center!important;
+ height:20px!important;
+ min-height:20px!important;
+ line-height:20px!important;
+ margin:0!important;
+ padding:0!important;
+ white-space:nowrap!important;
+}
+
+/* Keep task label and checkbox on the same vertical centerline.
+   Target the actual row children instead of the previous nested selectors. */
+.task{
+ align-items:center!important;
+}
+.task > input[type='checkbox'],
+.task > .check,
+.task .main > input[type='checkbox'],
+.task .main > .check{
+ align-self:center!important;
+ margin-top:0!important;
+ margin-bottom:0!important;
+}
+.task .main{
+ align-items:center!important;
+}
+.task .taskbody,
+.task .content{
+ align-self:center!important;
+ justify-content:center!important;
+}
+.task .tasktitle,
+.task .name,
+.task label{
+ align-items:center!important;
+ align-self:center!important;
+ margin-top:0!important;
+ margin-bottom:0!important;
+}
+
+/* Preview 3.16: unified helper/explanatory text */
+:root{--help-font-size:12px;--help-line-height:1.45}
+.helptext,
+.streak-help,
+.modal small,
+.field small,
+.modal .hint,
+.modal .helper,
+.modal .description,
+.modal .subtext{
+ font-size:var(--help-font-size)!important;
+ line-height:var(--help-line-height)!important;
+ color:var(--muted);
+}
+
+/* Preview 3.17 — theme consistency audit */
+#search,.search{background:var(--bg2)!important;color:var(--text)!important;border-color:var(--line)!important;box-shadow:none}
+#search::placeholder,.search::placeholder{color:var(--muted)!important}
+#search:hover,.search:hover{border-color:color-mix(in srgb,var(--gold) 55%,var(--line))!important}
+#search:focus,.search:focus{outline:none!important;border-color:var(--gold)!important;box-shadow:0 0 0 2px color-mix(in srgb,var(--gold) 32%,transparent)!important}
+.hero h1{color:var(--text)!important;text-shadow:0 2px 20px var(--heroGlow)!important}
+.btn{background:linear-gradient(var(--panel2),var(--panel))!important}
+.btn.primary{background:linear-gradient(color-mix(in srgb,var(--gold) 72%,var(--panel)),color-mix(in srgb,var(--gold2) 70%,var(--panel)))!important;color:var(--text)!important}
+.card h3,.cat h2,.chip b,.archivehead h3{color:var(--text)!important}
+.bar{background:var(--bg2)!important;border-color:var(--line)!important}
+.bar div{background:linear-gradient(90deg,var(--gold2),var(--gold))!important}
+.eventstatus.ended{color:var(--event)!important}
+.chip{border-color:var(--line)!important}
+.task:hover{background:var(--taskHover)!important;border-color:var(--gold2)!important}
+.handle,.footer,.done .name{color:var(--muted)!important}
+.badge{border-color:var(--gold2)!important;color:var(--text)!important}
+.counter input,.field input,.field select,.field textarea{background:var(--bg2)!important;border-color:var(--line)!important;color:var(--text)!important}
+.icon,.cattool{color:var(--muted)!important}
+.icon:hover,.cattool:hover{background:var(--taskHover)!important;color:var(--text)!important}
+.foot{border-top-color:var(--line)!important}
+.archiverow{border-color:var(--line)!important}
+.field label{color:var(--text)!important}
+.toast{background:var(--panel2)!important;border-color:var(--gold2)!important;color:var(--text)!important}
+
+/* Preview 3.19 — release-candidate stabilization */
+button:disabled,input:disabled,select:disabled,textarea:disabled{
+ opacity:.5;
+ cursor:not-allowed;
+}
+.modalactions{
+ border-top:1px solid var(--line);
+}
+.back{
+ background:color-mix(in srgb,var(--bg) 76%,transparent);
+}
+.task,.cat,.card,.archivepanel,.resetcard{
+ box-shadow:0 10px 24px rgba(0,0,0,.18);
+}
+@media(max-width:560px){
+ .btn,.cattool,.icon{touch-action:manipulation}
+ .modal{overscroll-behavior:contain}
+}
+
+/* Preview 3.20 — removable task colors */
+.task-color-control{
+ display:flex;
+ align-items:center;
+ gap:10px;
+}
+.task-color-control input[type='color']{
+ flex:1;
+ min-width:0;
+}
+.clear-task-color{
+ width:44px;
+ height:44px;
+ flex:0 0 44px;
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ padding:0;
+ border:1px solid var(--line);
+ border-radius:9px;
+ background:
+   linear-gradient(135deg,transparent 47%,color-mix(in srgb,var(--muted) 55%,transparent) 48%,color-mix(in srgb,var(--muted) 55%,transparent) 52%,transparent 53%),
+   var(--bg2);
+ color:var(--muted);
+ font-size:24px;
+ line-height:1;
+ font-weight:400;
+ cursor:pointer;
+}
+.clear-task-color:hover,
+.clear-task-color:focus-visible{
+ color:var(--text);
+ border-color:var(--gold);
+ background:
+   linear-gradient(135deg,transparent 47%,color-mix(in srgb,var(--gold) 55%,transparent) 48%,color-mix(in srgb,var(--gold) 55%,transparent) 52%,transparent 53%),
+   var(--taskHover);
+ outline:none;
+}
+
+/* Preview 3.22 — theme modal footer containment */
+.themegrid{
+ min-height:0;
+}
+.modal:has(.themegrid) .modal-scroll{
+ min-height:0;
+ overflow-y:auto!important;
+ overflow-x:hidden!important;
+ overscroll-behavior:contain;
+ padding-bottom:18px!important;
+}
+.modal:has(.themegrid) .modalactions{
+ position:relative!important;
+ z-index:20;
+ flex:0 0 auto;
+ background:var(--panel)!important;
+ border-top:1px solid var(--line)!important;
+ box-shadow:0 -12px 22px color-mix(in srgb,var(--bg) 72%,transparent);
+}
+.modal:has(.themegrid){
+ overflow:hidden!important;
+}
+@media(max-width:560px){
+ .modal:has(.themegrid){
+  max-height:calc(100dvh - 20px)!important;
+ }
+ .modal:has(.themegrid) .modal-scroll{
+  padding-bottom:24px!important;
+ }
+}
+
+/* Preview 3.23 — persistent task color accent */
+.task{
+ position:relative;
+ border-left-color:var(--line)!important;
+}
+.task[data-task-color]::before{
+ content:'';
+ position:absolute;
+ left:0;
+ top:8px;
+ bottom:8px;
+ width:5px;
+ border-radius:0 4px 4px 0;
+ background:var(--task-custom-color);
+ pointer-events:none;
+ z-index:2;
+}
+.task:hover,
+.task:focus,
+.task:focus-within,
+.task:active,
+.task.dragging{
+ border-left-color:var(--line)!important;
+}
+
+/* Preview 3.24 — task color picker preview */
+.task-color-control{
+ --task-color-preview:#808080;
+}
+.task-color-control input[type='color']{
+ background:linear-gradient(90deg,var(--task-color-preview),var(--task-color-preview))!important;
+}
+.task-color-control input[type='color']::-webkit-color-swatch-wrapper{
+ padding:0;
+}
+.task-color-control input[type='color']::-webkit-color-swatch{
+ border:none;
+ border-radius:8px;
+ background:var(--task-color-preview);
+}
+.task-color-control input[type='color']::-moz-color-swatch{
+ border:none;
+ border-radius:8px;
+ background:var(--task-color-preview);
+}
+
+/* Preview 3.25 — compact dashboard layout */
+.topactions{
+ display:flex;
+ align-items:center;
+ gap:10px;
+ flex-wrap:nowrap;
+}
+.topactions .btn{
+ white-space:nowrap;
+}
+
+#dashboard{
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr) minmax(0,1.65fr);
+ gap:16px!important;
+ align-items:stretch;
+}
+#progressCard{
+ grid-column:1;
+ grid-row:1;
+ align-self:stretch;
+ min-height:0!important;
+ padding:18px!important;
+}
+#progressCard h3{
+ margin-bottom:8px!important;
+}
+#progressCard .bar{
+ margin:6px 0 10px!important;
+}
+#progressCard .progressrow,
+#progressCard .progressmeta{
+ margin-top:6px!important;
+}
+#countdownCard{
+ grid-column:2;
+ grid-row:1;
+ align-self:stretch;
+}
+#quickViewCard{
+ grid-column:1 / -1;
+ grid-row:2;
+ min-height:0!important;
+}
+#quickViewCard .quickview,
+#quickViewCard .quickbody{
+ min-height:72px;
+}
+
+#countdownCard .resetgrid,
+#countdownCard .countdowngrid,
+#countdownCard .resetcards{
+ display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:10px!important;
+}
+#countdownCard .resetcard,
+#countdownCard .chip{
+ min-width:0;
+}
+@media(max-width:760px){
+ .topactions{
+  display:grid;
+  grid-template-columns:1fr 1fr 1.35fr;
+  gap:8px;
+ }
+ .topactions .btn{width:100%;padding-left:10px;padding-right:10px}
+ #dashboard{
+  grid-template-columns:1fr!important;
+ }
+ #progressCard,#countdownCard,#quickViewCard{
+  grid-column:1!important;
+  grid-row:auto!important;
+ }
+ #countdownCard .resetgrid,
+ #countdownCard .countdowngrid,
+ #countdownCard .resetcards{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ }
+}
+@media(max-width:520px){
+ #countdownCard .resetgrid,
+ #countdownCard .countdowngrid,
+ #countdownCard .resetcards{
+  gap:7px!important;
+ }
+ #countdownCard .resetcard,
+ #countdownCard .chip{
+  padding:10px!important;
+ }
+ #countdownCard .resetcard strong,
+ #countdownCard .chip b{
+  font-size:12px!important;
+ }
+ #countdownCard .resetcard div,
+ #countdownCard .chip div{
+  font-size:12px!important;
+ }
+}
+
+/* Preview 3.26 — compact stacked dashboard */
+#dashboard{
+ display:grid!important;
+ grid-template-columns:1fr!important;
+ gap:12px!important;
+ align-items:start!important;
+}
+#progressCard{
+ grid-column:1!important;
+ grid-row:auto!important;
+ min-height:0!important;
+ height:auto!important;
+ padding:14px 18px!important;
+ align-self:start!important;
+}
+#progressCard h3{margin:0 0 6px!important}
+#progressCard .bar{margin:4px 0 8px!important}
+#progressCard .progressrow,
+#progressCard .progressmeta{margin-top:4px!important}
+#countdownCard{
+ grid-column:1!important;
+ grid-row:auto!important;
+ margin-top:0!important;
+ align-self:start!important;
+}
+#countdownCard .resetgrid,
+#countdownCard .countdowngrid,
+#countdownCard .resetcards{
+ display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:10px!important;
+}
+#quickViewCard{
+ grid-column:1!important;
+ grid-row:auto!important;
+ width:100%!important;
+ min-height:0!important;
+}
+@media(max-width:560px){
+ #dashboard{gap:10px!important}
+ #progressCard{padding:12px 16px!important}
+ #countdownCard .resetgrid,
+ #countdownCard .countdowngrid,
+ #countdownCard .resetcards{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:6px!important;
+ }
+}
+
+/* Preview 3.26 — manual date entry + high-contrast calendar */
+.date-entry-wrap{
+ display:grid;
+ grid-template-columns:minmax(0,1fr) 44px;
+ gap:8px;
+ align-items:center;
+}
+.date-entry-wrap > input[type='text']{
+ width:100%;
+}
+.date-picker-proxy{
+ position:absolute!important;
+ width:1px!important;
+ height:1px!important;
+ opacity:0!important;
+ pointer-events:none!important;
+}
+.date-picker-btn{
+ width:44px;
+ height:44px;
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ padding:0;
+ border:1px solid var(--line);
+ border-radius:9px;
+ background:var(--bg2);
+ color:#fff!important;
+ cursor:pointer;
+}
+.date-picker-btn svg{
+ width:22px;
+ height:22px;
+ fill:none;
+ stroke:#fff!important;
+ stroke-width:1.8;
+ stroke-linecap:round;
+ stroke-linejoin:round;
+}
+.date-picker-btn:hover,
+.date-picker-btn:focus-visible{
+ border-color:var(--gold);
+ background:var(--taskHover);
+ outline:none;
+}
+
+/* Preview 3.27 — force three reset chips into one horizontal row */
+#resetPanel .resetgrid{
+ display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ grid-auto-flow:column!important;
+ gap:8px!important;
+ width:100%!important;
+ align-items:stretch!important;
+}
+#resetPanel .resetgrid > .chip{
+ min-width:0!important;
+ width:auto!important;
+ margin:0!important;
+ padding:10px!important;
+}
+#resetPanel .resetgrid > .chip b,
+#resetPanel .resetgrid > .chip span,
+#resetPanel .resetgrid > .chip small{
+ min-width:0;
+}
+@media(max-width:560px){
+ #resetPanel .resetgrid{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:6px!important;
+ }
+ #resetPanel .resetgrid > .chip{
+  padding:8px!important;
+ }
+ #resetPanel .resetgrid > .chip b{font-size:12px!important}
+ #resetPanel .resetgrid > .chip span{font-size:14px!important}
+ #resetPanel .resetgrid > .chip small{
+  font-size:10px!important;
+  line-height:1.3!important;
+ }
+}
+
+/* Preview 3.28 — task action icon consistency */
+.task .icon svg,
+.task .cattool svg,
+.task button svg{
+ fill:none!important;
+ stroke:currentColor!important;
+}
+.task .icon svg path,
+.task .icon svg rect,
+.task .icon svg line,
+.task .icon svg polyline,
+.task .icon svg polygon,
+.task .cattool svg path,
+.task .cattool svg rect,
+.task .cattool svg line,
+.task .cattool svg polyline,
+.task .cattool svg polygon,
+.task button svg path,
+.task button svg rect,
+.task button svg line,
+.task button svg polyline,
+.task button svg polygon{
+ fill:none!important;
+ stroke:currentColor!important;
+}
+
+/* Preview 3.30 — explicit Event category option */
+.event-option{
+ display:flex!important;
+ align-items:center!important;
+ gap:12px!important;
+ cursor:pointer;
+}
+.event-option input[type='checkbox']{
+ flex:0 0 auto;
+}
+#catEventEndDateField[hidden]{
+ display:none!important;
+}
+
+/* Preview 3.31 — Event field layout */
+.event-toggle-row{
+ display:flex!important;
+ align-items:center!important;
+ justify-content:flex-start!important;
+ gap:14px!important;
+ min-height:42px;
+}
+.event-toggle-row .event-field-label{
+ display:inline-flex!important;
+ align-items:center!important;
+ margin:0!important;
+ color:var(--text)!important;
+ font-weight:400!important;
+}
+.event-toggle-row input[type='checkbox']{
+ width:20px!important;
+ height:20px!important;
+ flex:0 0 20px!important;
+ margin:0!important;
+}
+#catEventFields[hidden]{display:none!important}
+.optional-label{
+ color:var(--muted);
+ font-size:var(--help-font-size);
+ font-weight:400;
+}
+
+/* Preview 3.34 — popup field consistency */
+.reset-help{margin-top:7px!important;margin-bottom:0!important}
+</style></head><body data-theme='night'><div class='wrap'><div class='hero'><div><h1>Baked Dynamic Activity Tracker</h1></div><div class='topactions topactions actions'><button class='btn primary' onclick='openProfile()'>Share / Import</button><button class='btn' onclick='openThemePicker()'>Themes</button><button class='btn' onclick='openSettings()'>Settings</button></div></div>
+<section id='dashboard' class='dashboard'><div class='card' id='progressCard'><h3>Activity Progress</h3><div class='bar'><div id='overallBar'></div></div><div class='stat'><span id='overallText'></span><span id='overallPct'></span></div></div><div class='card' id='resetPanel'><div style='display:flex;align-items:center;gap:8px;margin-bottom:12px'><h3 style='margin:0;flex:1'>Reset Countdown</h3><button type='button' class='btn ghost' id='resetHistoryButton' onclick='openResetHistory()'>History</button></div><div class='resetgrid'><div class='chip jumpchip' id='chipDaily' onclick="jumpToCategory('daily')" title='Jump to Daily'><b>Daily</b><span id='rDaily'>—</span><small class='resetstatus' id='sDaily'>Every day at 7:00 AM PT</small></div><div class='chip jumpchip' id='chipWeekly' onclick="jumpToCategory('weekly')" title='Jump to Weekly'><b>Weekly</b><span id='rWeekly'>—</span><small class='resetstatus' id='sWeekly'>Thursday at 7:00 AM PT</small></div><div class='chip jumpchip' id='chipMonthly' onclick="jumpToCategory('monthly')" title='Jump to Monthly'><b>Monthly</b><span id='rMonthly'>—</span><small class='resetstatus' id='sMonthly'>First Thursday at 7:00 AM PT</small></div></div></div><div class='card' id='quickViewCard'><h3>Quick View</h3><div id='quickView' style='color:var(--muted)'></div></div></section>
+<div class='controls'><input id='search' class='search' placeholder='Search every activity…' oninput='render()'><button class='btn' onclick='toggleAll(false)'>Expand All</button><button class='btn' onclick='toggleAll(true)'>Collapse All</button><button class='btn' onclick='addTask()'>+Activity</button><button class='btn' onclick='addCategory()'>+ Category</button></div><div id='storageWarning' class='storagewarn hidden'><strong>Local saving is unavailable in this browser context.</strong> The tracker will still work, but changes may not survive closing or reloading the page. Opening the HTML directly from a normal browser-accessible folder may restore saving.</div><main id='app'></main><section id='archiveRoot'></section></div><div class='footer'>Beta V1.0.0</div><div id='modalRoot'></div>
+<script>
+const modalRoot=document.getElementById('modalRoot');
+const mk=(name,max=null)=>({id:'x'+Math.random().toString(36).slice(2,10),name,done:false,pinned:false,important:false,color:'',note:'',count:max?0:null,max:max||null});
+const DEF={version:3.5,theme:'nao',settings:{dashboard:true,countdown:true,animations:true,counters:true,notes:true,dragHints:true,resetHistory:true,search:true,progress:true},categories:[
+{id:'daily',name:'Daily',type:'daily',resetMode:'daily',collapsed:false,archived:false,tasks:[mk('Festia Mini-Games',5),mk('Shineseeker Dungeon'),mk('Unlimited Shadow Mission Pass (Adventurer Seal Shop)'),mk('Squire Management'),mk('Dan Advancement Tests'),mk('Grandmaster Missions')]},
+{id:'weekly',name:'Weekly',type:'weekly',resetMode:'weekly',collapsed:false,archived:false,tasks:[mk('Bartering'),mk('Crom Bas',10),mk('Glenn Bearna',3),mk('Guild Missions'),mk('Group Commerce'),mk('Tech Duinn Solo Passes',10),mk('Neartites',10)]},
+{id:'biweekly',name:'Biweekly',type:'biweekly',resetMode:'manual',collapsed:false,archived:false,tasks:[mk('Bartering Crafts')]},
+{id:'monthly',name:'Monthly',type:'monthly',resetMode:'monthly',collapsed:false,archived:false,tasks:[mk('Fahmes Ruin')]},
+{id:'events',name:'Event',type:'event',resetMode:'manual',collapsed:false,archived:false,tasks:[]}
+]};
+let storageAvailable=true;
+function safeStorageGet(key){
+ try{return localStorage.getItem(key)}
+ catch{storageAvailable=false;return null}
+}
+function safeStorageSet(key,value){
+ try{localStorage.setItem(key,value);return true}
+ catch{storageAvailable=false;return false}
+}
+let data;try{data=JSON.parse(safeStorageGet('bdat_v3'))||structuredClone(DEF)}catch{data=structuredClone(DEF)};
+
+function applyDefaultNotesIfMissing(d){
+ const daily=d?.categories?.find(c=>c.id==='daily');
+ const t=daily?.tasks?.find(t=>t.name==='Shineseeker Dungeon');
+ if(t&&!(t.note||'').trim())t.note='3 Soraia + 1 purchase from Soraia';
+ return d
+}
+function migrateBuiltInEventCategoryName(d){
+ const c=d?.categories?.find(x=>x.id==='events'||x.id==='event');
+ if(c&&c.name==='Events')c.name='Event';
+ return d
+}
+function migrateData(d){
+ if(!d||!Array.isArray(d.categories))return structuredClone(DEF);
+
+ d.version=3.5;
+
+ // Legacy Alpha themes are intentionally retired; unknown/legacy IDs fall back to Nao.
+ const validThemes=['nao','cowenna','eochaid','loiscneach','rowan','iolar','matthias','micheil','taise','glora','ater'];
+ if(!validThemes.includes(d.theme))d.theme='nao';
+
+ // Preserve legacy settings and supply defaults for settings introduced later.
+ d.settings={...DEF.settings,...(d.settings||{})};
+ delete d.settings.commandPalette;
+ delete d.settings.streaks;
+
+ d.reset=d.reset&&typeof d.reset==='object'?d.reset:{};
+ d.resetHistory=Array.isArray(d.resetHistory)?d.resetHistory:[];
+
+ d.categories.forEach(c=>{
+   // Preserve identity, name, type, ordering, archive state, and tasks.
+   c.archived=!!c.archived;
+   c.collapsed=!!c.collapsed;
+   if(!Array.isArray(c.tasks))c.tasks=[];
+
+   if(c.id==='daily')c.resetMode='daily';
+   else if(c.id==='weekly')c.resetMode='weekly';
+   else if(c.id==='monthly')c.resetMode='monthly';
+   else if(c.id==='biweekly'||c.id==='event'||c.id==='events')c.resetMode='manual';
+   else if(!['manual','daily','weekly','monthly'].includes(c.resetMode))c.resetMode='manual';
+
+   if(c.type==='event'){
+     if(typeof c.endDate!=='string')c.endDate=null;
+     if(typeof c.endTime!=='string')c.endTime=null
+   }else{
+     if(c.endDate===undefined)c.endDate=null;
+     if(c.endTime===undefined)c.endTime=null
+   }
+
+   if(!c.streak||typeof c.streak!=='object')c.streak={current:0};
+   c.streak.current=Math.max(0,Number(c.streak.current)||0);
+   delete c.streak.best;
+
+   const builtInStreak=['daily','weekly','monthly'].includes(c.id);
+   if(typeof c.streakEnabled!=='boolean')c.streakEnabled=builtInStreak;
+
+   c.tasks.forEach(t=>{
+     // Legacy task fields are preserved; only missing newer-safe defaults are supplied.
+     t.done=!!t.done;
+     t.pinned=!!t.pinned;
+     t.important=!!t.important;
+     if(typeof t.color!=='string')t.color='';
+     if(typeof t.note!=='string')t.note='';
+     if(t.max===undefined||t.max===null||t.max===''){
+       t.max=null;
+       t.count=null
+     }else{
+       t.max=Math.max(1,Number(t.max)||1);
+       t.count=Math.max(0,Math.min(t.max,Number(t.count)||0))
+     }
+   })
+ });
+
+ migrateBuiltInEventCategoryName(d);
+ return applyDefaultNotesIfMissing(d)
+}
+data=migrateData(data);const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));const save=()=>safeStorageSet('bdat_v3',JSON.stringify(data));function toast(s){let d=document.createElement('div');d.className='toast';d.textContent=s;document.body.appendChild(d);setTimeout(()=>d.remove(),1700)}
+function allTasks(){return data.categories.filter(c=>!c.archived).flatMap(c=>c.tasks)}function applySettings(){
+ document.body.dataset.theme=themePreviewCurrent||data.theme||'nao';
+ document.body.classList.toggle('noanim',!data.settings.animations);
+ dashboard.classList.toggle('hidden',!data.settings.dashboard);
+ resetPanel.classList.toggle('hidden',!data.settings.countdown);
+ const historyBtn=document.getElementById('resetHistoryButton');
+ if(historyBtn)historyBtn.classList.toggle('feature-hidden',!data.settings.resetHistory);
+ const progressCard=document.getElementById('progressCard');
+ if(progressCard)progressCard.classList.toggle('feature-hidden',!data.settings.progress);
+ const searchBox=document.getElementById('search');
+ if(searchBox)searchBox.classList.toggle('feature-hidden',!data.settings.search);
+ const storageWarning=document.getElementById('storageWarning');
+ if(storageWarning)storageWarning.classList.toggle('hidden',storageAvailable)
+}
+
+function parseLocalDateEnd(dateStr,timeStr=null){
+ if(!dateStr)return null;
+ let [y,m,d]=dateStr.split('-').map(Number);
+ if(!y||!m||!d)return null;
+
+ if(timeStr){
+   const tm=/^(\d{2}):(\d{2})$/.exec(timeStr);
+   if(tm)return new Date(y,m-1,d,Number(tm[1]),Number(tm[2]),0,0)
+ }
+
+ // No time specified: preserve legacy behavior and end at the end of the day.
+ return new Date(y,m-1,d,23,59,59,999)
+}
+function eventDateStatus(c,now=new Date()){
+ if(c.type!=='event'||!c.endDate)return null;
+ let end=parseLocalDateEnd(c.endDate,c.endTime);
+ if(!end)return null;
+
+ const when=`${formatEventDate(c.endDate)}${c.endTime?` at ${formatEventTime(c.endTime)}`:''}`;
+ let diff=end-now,days=Math.ceil(diff/86400000);
+
+ if(diff<0)return {state:'ended',label:'Ended',detail:`Ended ${when}`};
+ if(days<=3)return {
+   state:'ending',
+   label:days<=1?'Ends today':`Ends in ${days} days`,
+   detail:`Ends ${when}`
+ };
+ return {state:'active',label:`Ends ${formatEventDate(c.endDate)}`,detail:`Ends ${when}`}
+}
+function formatEventDate(dateStr){
+ if(!dateStr)return 'No end date';
+ let [y,m,d]=dateStr.split('-').map(Number);
+ return new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric'}).format(new Date(y,m-1,d))
+}
+function eventStatusHtml(c){
+ let st=eventDateStatus(c);
+ if(!st)return '';
+ return `<span class='eventstatus ${st.state==='active'?'':st.state}' title='${esc(st.detail)}'>${esc(st.label)}</span>`
+}
+function eventExpiredPromptHtml(c){
+ let st=eventDateStatus(c);
+ if(!st||st.state!=='ended'||c.archived)return '';
+ return `<div class='eventprompt'><span><strong>Event ended</strong>${esc(st.detail)}. Archive it when you are finished with this checklist.</span></div>`
+}
+function render(){if(touchDrag)cleanupTouchDrag();applySettings();let q=search.value.trim().toLowerCase();app.innerHTML='';data.categories.filter(c=>!c.archived).forEach(c=>{let tasks=[...c.tasks].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));if(q)tasks=tasks.filter(x=>x.name.toLowerCase().includes(q)||(x.note||'').toLowerCase().includes(q));if(q&&!tasks.length)return;let el=document.createElement('section');el.className=`cat ${c.type} ${c.collapsed&&!q?'collapsed':''}`;let done=c.tasks.filter(x=>x.done).length;el.innerHTML=`<div class='head' onclick="toggleCat('${c.id}')"><div class='stripe'></div><span class='chev'>▼</span><h2><span class='catnamewrap'>${categoryGemHtml(c)}<span>${esc(c.name)}</span>${categoryStreakHtml(c)}</span></h2><div class='meta'>${done}/${c.tasks.length}${c.resetMode&&c.resetMode!=='manual'?` · ${resetModeLabel(c.resetMode)}`:''}${eventStatusHtml(c)}</div><div class='categorytools'>${c.type==='event'?`<button type='button' class='cattool' title='Event end date' aria-label='Event end date' onclick="event.stopPropagation();editEventDate('${c.id}')"><svg viewBox='0 0 24 24'><rect x='4' y='5' width='16' height='15' rx='2'></rect><path d='M8 3v4M16 3v4M4 9h16'></path></svg></button>`:''}${!['daily','weekly','biweekly','monthly','event'].includes(c.id)?`<button type='button' class='cattool' title='Reset schedule' aria-label='Reset schedule' onclick="event.stopPropagation();editCategorySchedule('${c.id}')"><svg viewBox='0 0 24 24'><circle cx='12' cy='12' r='8'></circle><path d='M12 7v5l3 2'></path></svg></button><button type='button' class='cattool' title='Rename category' aria-label='Rename category' onclick="event.stopPropagation();renameCategory('${c.id}')"><svg viewBox='0 0 24 24'><path d='M4 20h4l11-11-4-4L4 16v4Z'></path><path d='m13.5 6.5 4 4'></path></svg></button><button type='button' class='cattool delete-category-btn' title='Delete category' aria-label='Delete category' onclick="event.stopPropagation();requestDelete('category','${c.id}')"><svg viewBox='0 0 24 24' aria-hidden='true'><path d='M5 7h14'></path><path d='M9 7V4h6v3'></path><path d='m8 10 .5 9h7l.5-9'></path></svg></button>`:''}</div></div><div class='body'><div class='tasks'></div>${eventExpiredPromptHtml(c)}${data.settings.dragHints?`<div class='draghint'>Drag activities to reorder them or move them between categories.</div>`:''}<div class='foot'><button class='btn' onclick="event.stopPropagation();addTask('${c.id}')">+Activity</button>${c.type==='event'?`<button class='btn' onclick="archiveEvent('${c.id}')">Archive Event</button>`:''}</div></div>`;let list=el.querySelector('.tasks');tasks.forEach(x=>list.appendChild(taskEl(c,x)));list.addEventListener('dragover',e=>handleDragOver(e,c.id));list.addEventListener('dragleave',e=>{if(!list.contains(e.relatedTarget))clearDropIndicators()});list.addEventListener('drop',e=>dropTask(e,c.id));app.appendChild(el)});renderArchives();updateDashboard();save()}
+function taskEl(c,x){
+ let d=document.createElement('div');
+ d.className='task'+(x.done?' done':'');
+ d.draggable=true;d.dataset.id=x.id;d.dataset.cat=c.id;
+ if(x.color){
+ d.dataset.taskColor='1';
+ d.style.setProperty('--task-custom-color',x.color)
+}
+ d.ondragstart=e=>{d.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',JSON.stringify({cat:c.id,id:x.id}))};
+ d.ondragend=()=>{d.classList.remove('dragging');clearDropIndicators()};
+ const pinSvg=`<svg viewBox="0 0 24 24" aria-hidden="true"><path class="pin-body" d="M9 3h6l-1 5 3 3v2H7v-2l3-3-1-5Z"></path><path d="M12 13v8"></path></svg>`;
+ const starSvg=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.75 5.57 6.15.9-4.45 4.33 1.05 6.12L12 17.03l-5.5 2.89 1.05-6.12L3.1 9.47l6.15-.9L12 3Z"></path></svg>`;
+ const editSvg=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13.5 6.5 4 4"></path></svg>`;
+ const deleteSvg=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14"></path><path d="M9 7V4h6v3"></path><path d="m8 10 .5 9h7l.5-9"></path></svg>`;
+ d.innerHTML=`<div class='handle'>⋮⋮</div>
+ <input class='chk' type='checkbox' ${x.done?'checked':''} onchange="setDone('${c.id}','${x.id}',this.checked)">
+ <div class='taskcontent'>
+   <div class='taskline'>
+     <div class='tasktitle'>
+       <span class='name'>${esc(x.name)}</span>
+       <span class='badges'>${x.important?"<span class='badge'>IMPORTANT</span>":''}</span>
+     </div>
+     <div class='taskactions'>
+       <button class='icon pin ${x.pinned?"active":""}' aria-label='${x.pinned?"Unpin":"Pin"} task' title='${x.pinned?"Unpin":"Pin"}' onclick="flag('${c.id}','${x.id}','pinned')">${pinSvg}</button>
+       <button class='icon important ${x.important?"active":""}' aria-label='${x.important?"Remove important":"Mark important"}' title='Important' onclick="flag('${c.id}','${x.id}','important')">${starSvg}</button>
+       <button class='icon' aria-label='Edit task' title='Edit' onclick="editTask('${c.id}','${x.id}')">${editSvg}</button>
+       <button type='button' class='icon delete-task-btn' aria-label='Delete task' title='Delete' onclick="event.stopPropagation();requestDelete('task','${c.id}','${x.id}')">${deleteSvg}</button>
+     </div>
+   </div>
+   <div class='taskdetails'>
+     ${data.settings.counters&&x.max?`<div class='counter'><input type='number' min='0' max='${x.max}' value='${x.count??0}' onchange="setCount('${c.id}','${x.id}',this.value)"> / ${x.max}</div>`:''}
+     ${data.settings.notes&&x.note?`<div style='color:var(--muted);font-size:12px'>${esc(x.note)}</div>`:''}
+   </div>
+ </div>`;
+ setupTouchDrag(d,c.id,x.id);
+ return d
+}
+function ft(c,i){let cat=data.categories.find(x=>x.id===c);return[cat,cat?.tasks.find(x=>x.id===i)]}function setDone(c,i,v){let[,x]=ft(c,i);x.done=v;if(x.max&&v)x.count=x.max;render()}function setCount(c,i,v){let[,x]=ft(c,i);x.count=Math.max(0,Math.min(x.max,Number(v)||0));x.done=x.count>=x.max;render()}function flag(c,i,k){let[,x]=ft(c,i);x[k]=!x[k];render()}function toggleCat(i){let c=data.categories.find(x=>x.id===i);c.collapsed=!c.collapsed;render()}function toggleAll(v){data.categories.forEach(c=>c.collapsed=v);render()}function removeTask(c,i){requestDelete('task',c,i)}
+
+
+let touchDrag=null;
+let suppressNativeTaskDropUntil=0;
+
+function setupTouchDrag(taskEl,categoryId,taskId){
+ const handle=taskEl.querySelector('.handle');
+ if(!handle)return;
+
+ handle.addEventListener('pointerdown',e=>{
+   if(e.pointerType==='mouse')return;
+   if(e.button!==undefined&&e.button!==0)return;
+   if(touchDrag)cancelTouchDrag();
+
+   e.preventDefault();
+   e.stopPropagation();
+
+   const [,task]=ft(categoryId,taskId);
+   if(!task)return;
+
+   clearDropIndicators();
+
+   const ghost=document.createElement('div');
+   ghost.className='touch-drag-ghost';
+   ghost.textContent=task.name;
+   document.body.appendChild(ghost);
+
+   // Prevent the browser's native HTML5 drag engine from competing with
+   // our pointer/touch drag implementation on mobile.
+   const previousDraggable=taskEl.draggable;
+   taskEl.draggable=false;
+
+   touchDrag={
+     pointerId:e.pointerId,
+     sourceCat:categoryId,
+     taskId,
+     sourceEl:taskEl,
+     handle,
+     ghost,
+     previousDraggable,
+     targetCat:categoryId,
+     targetTask:null,
+     after:false
+   };
+
+   taskEl.classList.add('touch-dragging');
+   positionTouchGhost(e.clientX,e.clientY);
+
+   try{handle.setPointerCapture(e.pointerId)}catch{}
+
+   document.addEventListener('pointermove',onTouchDragMove,{passive:false,capture:true});
+   document.addEventListener('pointerup',onTouchDragEnd,{passive:false,capture:true});
+   document.addEventListener('pointercancel',onTouchDragCancel,{passive:false,capture:true});
+ });
+}
+
+function onTouchDragMove(e){
+ if(!touchDrag||touchDrag.pointerId!==e.pointerId)return;
+ e.preventDefault();
+ updateTouchDrag(e.clientX,e.clientY)
+}
+
+function onTouchDragEnd(e){
+ if(!touchDrag||touchDrag.pointerId!==e.pointerId)return;
+ e.preventDefault();
+ finishTouchDrag()
+}
+
+function onTouchDragCancel(e){
+ if(!touchDrag||touchDrag.pointerId!==e.pointerId)return;
+ cancelTouchDrag()
+}
+
+function removeTouchDragDocumentListeners(){
+ document.removeEventListener('pointermove',onTouchDragMove,true);
+ document.removeEventListener('pointerup',onTouchDragEnd,true);
+ document.removeEventListener('pointercancel',onTouchDragCancel,true)
+}
+
+function positionTouchGhost(x,y){
+ if(!touchDrag?.ghost)return;
+ touchDrag.ghost.style.left=x+'px';
+ touchDrag.ghost.style.top=y+'px'
+}
+
+function categoryIdFromPointElement(el){
+ const task=el?.closest?.('.task');
+ if(task?.dataset?.cat)return task.dataset.cat;
+
+ const taskList=el?.closest?.('.tasks');
+ if(taskList){
+   const categorySection=taskList.closest('.cat');
+   const firstTask=taskList.querySelector('.task');
+   if(firstTask?.dataset?.cat)return firstTask.dataset.cat;
+
+   const sections=[...document.querySelectorAll('#app > .cat')];
+   const index=sections.indexOf(categorySection);
+   const q=search.value.trim().toLowerCase();
+   const visibleCats=data.categories.filter(c=>!c.archived).filter(c=>{
+     if(!q)return true;
+     return c.tasks.some(t=>t.name.toLowerCase().includes(q)||(t.note||'').toLowerCase().includes(q))
+   });
+   if(index>=0&&visibleCats[index])return visibleCats[index].id
+ }
+ return null
+}
+
+function updateTouchDrag(x,y){
+ if(!touchDrag)return;
+ positionTouchGhost(x,y);
+ clearDropIndicators();
+
+ const el=document.elementFromPoint(x,y);
+ if(!el)return;
+
+ const list=el.closest?.('.tasks');
+ const task=el.closest?.('.task');
+ const targetCat=categoryIdFromPointElement(el);
+
+ if(!list||!targetCat)return;
+
+ touchDrag.targetCat=targetCat;
+ list.classList.add('dropzone');
+
+ if(task&&task.dataset.id!==touchDrag.taskId){
+   const rect=task.getBoundingClientRect();
+   const after=y>=rect.top+rect.height/2;
+   touchDrag.targetTask=task.dataset.id;
+   touchDrag.after=after;
+   task.classList.add(after?'drop-after':'drop-before')
+ }else{
+   touchDrag.targetTask=null;
+   touchDrag.after=false
+ }
+
+ const edge=70;
+ if(y<edge)window.scrollBy({top:-12,behavior:'auto'});
+ else if(y>window.innerHeight-edge)window.scrollBy({top:12,behavior:'auto'})
+}
+
+function finishTouchDrag(){
+ if(!touchDrag)return;
+ suppressNativeTaskDropUntil=Date.now()+600;
+
+ const state=touchDrag;
+ const src=data.categories.find(c=>c.id===state.sourceCat);
+ const dst=data.categories.find(c=>c.id===state.targetCat);
+
+ if(src&&dst){
+   const sourceIndex=src.tasks.findIndex(t=>t.id===state.taskId);
+   if(sourceIndex>=0){
+     const originalCatId=src.id;
+     const originalIndex=sourceIndex;
+     const [task]=src.tasks.splice(sourceIndex,1);
+
+     let finalIndex;
+     if(state.targetTask&&state.targetTask!==state.taskId){
+       let targetIndex=dst.tasks.findIndex(t=>t.id===state.targetTask);
+       if(targetIndex<0){
+         dst.tasks.push(task);
+         finalIndex=dst.tasks.length-1
+       }else{
+         finalIndex=targetIndex+(state.after?1:0);
+         dst.tasks.splice(finalIndex,0,task)
+       }
+     }else{
+       // Dropping back onto the source task / empty portion of the same list
+       // should preserve its original position rather than pretending a reorder occurred.
+       if(dst.id===originalCatId){
+         finalIndex=Math.min(originalIndex,dst.tasks.length);
+         dst.tasks.splice(finalIndex,0,task)
+       }else{
+         dst.tasks.push(task);
+         finalIndex=dst.tasks.length-1
+       }
+     }
+
+     const changed=originalCatId!==dst.id||originalIndex!==finalIndex;
+     cleanupTouchDrag();
+
+     if(changed){
+       render();
+       toast(originalCatId===dst.id?'Activity reordered':`Moved to ${dst.name}`)
+     }else{
+       // No data changed, so avoid an unnecessary save/render and notification.
+       clearDropIndicators()
+     }
+     return
+   }
+ }
+
+ cleanupTouchDrag()
+}function cleanupTouchDrag(){
+ if(!touchDrag){
+   removeTouchDragDocumentListeners();
+   clearDropIndicators();
+   return
+ }
+
+ const state=touchDrag;
+
+ try{
+   if(state.handle?.hasPointerCapture?.(state.pointerId)){
+     state.handle.releasePointerCapture(state.pointerId)
+   }
+ }catch{}
+
+ if(state.sourceEl){
+   state.sourceEl.classList.remove('touch-dragging');
+   state.sourceEl.draggable=state.previousDraggable
+ }
+
+ state.ghost?.remove();
+ touchDrag=null;
+ removeTouchDragDocumentListeners();
+ clearDropIndicators()
+}
+
+function cancelTouchDrag(){cleanupTouchDrag()}
+
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&touchDrag)cancelTouchDrag()});
+window.addEventListener('blur',()=>{if(touchDrag)cancelTouchDrag()});
+function isNoOpTaskDrop(originalCatId,originalIndex,dstId,finalIndex){
+ return originalCatId===dstId&&originalIndex===finalIndex
+}
+function clearDropIndicators(){
+ document.querySelectorAll('.tasks').forEach(x=>x.classList.remove('dropzone'));
+ document.querySelectorAll('.task').forEach(x=>x.classList.remove('drop-before','drop-after'))
+}
+function handleDragOver(e,targetCat){
+ e.preventDefault();
+ clearDropIndicators();
+ const list=e.currentTarget;
+ list.classList.add('dropzone');
+ const over=e.target.closest('.task');
+ if(over){
+   const rect=over.getBoundingClientRect();
+   over.classList.add(e.clientY<rect.top+rect.height/2?'drop-before':'drop-after')
+ }
+}
+function dropTask(e,target){
+ e.preventDefault();
+ if(Date.now()<suppressNativeTaskDropUntil){clearDropIndicators();return}
+
+ let p;try{p=JSON.parse(e.dataTransfer.getData('text/plain'))}catch{clearDropIndicators();return}
+ let src=data.categories.find(c=>c.id===p.cat),dst=data.categories.find(c=>c.id===target);
+ if(!src||!dst){clearDropIndicators();return}
+
+ const originalIndex=src.tasks.findIndex(x=>x.id===p.id);
+ if(originalIndex<0){clearDropIndicators();return}
+
+ const over=e.target.closest('.task');
+
+ // Dropping directly back on the dragged task is a true no-op.
+ if(src.id===dst.id&&over?.dataset?.id===p.id){
+   clearDropIndicators();
+   return
+ }
+
+ const [task]=src.tasks.splice(originalIndex,1);
+ let finalIndex;
+
+ if(over&&over.dataset.id!==task.id){
+   let j=dst.tasks.findIndex(x=>x.id===over.dataset.id);
+   const rect=over.getBoundingClientRect();
+   const after=e.clientY>=rect.top+rect.height/2;
+   if(j<0){
+     dst.tasks.push(task);
+     finalIndex=dst.tasks.length-1
+   }else{
+     finalIndex=j+(after?1:0);
+     dst.tasks.splice(finalIndex,0,task)
+   }
+ }else if(src.id===dst.id){
+   // Same category with no meaningful target: restore original slot.
+   finalIndex=Math.min(originalIndex,dst.tasks.length);
+   dst.tasks.splice(finalIndex,0,task)
+ }else{
+   dst.tasks.push(task);
+   finalIndex=dst.tasks.length-1
+ }
+
+ clearDropIndicators();
+ const changed=src.id!==dst.id||originalIndex!==finalIndex;
+ if(changed){
+   render();
+   toast(src.id===dst.id?'Activity reordered':`Moved to ${dst.name}`)
+ }
+}
+
+function resetModeLabel(mode){return({manual:'Manual',daily:'Daily reset',weekly:'Weekly reset',monthly:'Monthly reset'})[mode]||'Manual'}
+function resetModeOptions(selected='manual'){return [['manual','Manual'],['daily','Daily — every day at 7:00 AM PT'],['weekly','Weekly — Thursday at 7:00 AM PT'],['monthly','Monthly — first Thursday at 7:00 AM PT']].map(([v,l])=>`<option value='${v}' ${v===selected?'selected':''}>${l}</option>`).join('')}
+function toggleAddCategoryEventFields(){
+ const checked=!!document.getElementById('catIsEvent')?.checked;
+ const fields=document.getElementById('catEventFields');
+ if(fields)fields.hidden=!checked;
+ if(!checked){
+   const dateInput=document.getElementById('catEndDate');
+   const picker=document.getElementById('catEndDatePicker');
+   const timeInput=document.getElementById('catEndTime');
+   if(dateInput)dateInput.value='';
+   if(picker)picker.value='';
+   if(timeInput)timeInput.value=''
+ }
+}
+function addCategory(){modal(`<h2>Add Category</h2><div class='field'><label>Category Name</label><input id='catName' autofocus placeholder='e.g. Raids'></div><div class='field'><label>Accent</label><select id='catType'><option value='daily'>Emerald</option><option value='weekly'>Sapphire</option><option value='biweekly'>Amethyst</option><option value='monthly'>Amber</option><option value='event'>Crimson</option></select></div><div class='field'><label>Automatic Reset</label><select id='catReset' onchange='syncNewCategoryStreakOption()'>${resetModeOptions('manual')}</select><div class='streak-help reset-help'>Automatic resets clear completion and counters only. Notes, colors, pins, importance, tasks, and ordering are preserved.</div></div><div class='field' id='catStreakField'><label class='streak-option' for='catStreakEnabled'><input id='catStreakEnabled' type='checkbox'><span class='streak-option-text'>Streak Count</span></label><div class='streak-help'>Enable streak tracking for Daily, Weekly, or Monthly reset schedules.</div></div><div class='field' id='catEventOptionField'>
+ <div class='event-toggle-row'>
+  <label class='event-field-label' for='catIsEvent'>Event?</label>
+  <input id='catIsEvent' type='checkbox' onchange='toggleAddCategoryEventFields()'>
+ </div>
+</div>
+<div id='catEventFields' hidden>
+ <div class='field'>
+  <label>Event End Date</label>
+  <div class='date-entry-wrap'>
+   <input id='catEndDate' type='text' inputmode='numeric' placeholder='MM-DD-YYYY' autocomplete='off' maxlength='10' oninput='formatDateInputLive(this)'>
+   <input id='catEndDatePicker' type='date' tabindex='-1' aria-hidden='true' onchange="catEndDate.value=formatDateForEntry(this.value)" class='date-picker-proxy'>
+   <button type='button' class='date-picker-btn' aria-label='Open calendar' onclick="catEndDatePicker.showPicker?catEndDatePicker.showPicker():catEndDatePicker.click()"><svg viewBox='0 0 24 24' aria-hidden='true'><path d='M7 2v3M17 2v3M3.5 8h17M5 4.5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-12a2 2 0 0 1 2-2Z'/></svg></button>
+  </div>
+ </div>
+ <div class='field'>
+  <label>Event End Time <span class='optional-label'>(Optional)</span></label>
+  <input id='catEndTime' type='text' inputmode='text' placeholder='e.g. 5:30 PM' autocomplete='off'>
+ </div>
+</div><div class='modalactions'><button class='btn' onclick='closeModal()'>Cancel</button><button class='btn primary' onclick='commitAddCategory()'>+Category</button></div>`);setTimeout(()=>{catName.focus();syncNewCategoryStreakOption()},20)}
+function syncNewCategoryStreakOption(){
+ const reset=document.getElementById('catReset');
+ const box=document.getElementById('catStreakEnabled');
+ const field=document.getElementById('catStreakField');
+ if(!reset||!box||!field)return;
+ const allowed=['daily','weekly','monthly'].includes(reset.value);
+ field.hidden=!allowed;
+ box.disabled=!allowed;
+ if(!allowed)box.checked=false
+}
+
+function formatDateInputLive(input){
+ let digits=(input.value||'').replace(/\D/g,'').slice(0,8);
+ let out='';
+ if(digits.length<=2)out=digits;
+ else if(digits.length<=4)out=digits.slice(0,2)+'-'+digits.slice(2);
+ else out=digits.slice(0,2)+'-'+digits.slice(2,4)+'-'+digits.slice(4);
+ input.value=out
+}
+function normalizeOptionalEventTime(value){
+ const v=(value||'').trim();
+ if(!v)return null;
+
+ let m=/^(\d{1,2}):(\d{2})\s*([AaPp][Mm])$/.exec(v);
+ if(m){
+   let h=Number(m[1]),min=Number(m[2]);
+   if(h<1||h>12||min>59)return null;
+   if(m[3].toUpperCase()==='PM'&&h!==12)h+=12;
+   if(m[3].toUpperCase()==='AM'&&h===12)h=0;
+   return `${String(h).padStart(2,'0')}:${String(min).padStart(2,'0')}`
+ }
+
+ m=/^(\d{1,2}):(\d{2})$/.exec(v);
+ if(m){
+   const h=Number(m[1]),min=Number(m[2]);
+   if(h>23||min>59)return null;
+   return `${String(h).padStart(2,'0')}:${String(min).padStart(2,'0')}`
+ }
+
+ return null
+}
+function formatEventTime(timeStr){
+ if(!timeStr)return '';
+ const m=/^(\d{2}):(\d{2})$/.exec(timeStr);
+ if(!m)return timeStr;
+ let h=Number(m[1]),min=m[2];
+ const suffix=h>=12?'PM':'AM';
+ h=h%12||12;
+ return `${h}:${min} ${suffix}`
+}
+function formatDateForEntry(iso){
+ const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec((iso||'').trim());
+ return m?`${m[2]}-${m[3]}-${m[1]}`:''
+}
+function normalizeOptionalDateInput(value){
+ const v=(value||'').trim();
+ if(!v)return null;
+
+ let m=/^(\d{2})-(\d{2})-(\d{4})$/.exec(v);
+ if(m){
+   const [,mo,day,year]=m;
+   const d=new Date(Number(year),Number(mo)-1,Number(day));
+   if(d.getFullYear()===Number(year)&&d.getMonth()===Number(mo)-1&&d.getDate()===Number(day)){
+     return `${year}-${mo}-${day}`
+   }
+   return null
+ }
+
+ // Retain compatibility if an older ISO-formatted value is pasted.
+ m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v);
+ if(m)return v;
+
+ return null
+}
+function commitAddCategory(){let name=catName.value.trim();if(!name)return;let id='x'+Math.random().toString(36).slice(2,10);data.categories.push({id,name,type:catIsEvent.checked?'event':catType.value,resetMode:catReset.value,streakEnabled:!!catStreakEnabled.checked,streak:{current:0},endDate:catIsEvent.checked?normalizeOptionalDateInput(catEndDate.value):null,endTime:catIsEvent.checked?normalizeOptionalEventTime(catEndTime.value):null,collapsed:false,archived:false,tasks:[]});data.reset['cat_'+id]=currentPeriodKey(catReset.value);closeModal();render();toast('Category added')}
+
+function editEventDate(id){
+ let c=data.categories.find(x=>x.id===id);if(!c||c.type!=='event')return;
+ modal(`<h2>Event End Date & Time</h2>
+ <div class='field'><label>Event End Date</label>
+  <div class='date-entry-wrap'>
+   <input id='eventEndDate' type='text' inputmode='numeric' placeholder='MM-DD-YYYY' autocomplete='off' maxlength='10' value='${esc(c.endDate?formatDateForEntry(c.endDate):'')}' oninput='formatDateInputLive(this)'>
+   <input id='eventEndDatePicker' type='date' tabindex='-1' aria-hidden='true' value='${c.endDate||''}' onchange="eventEndDate.value=formatDateForEntry(this.value)" class='date-picker-proxy'>
+   <button type='button' class='date-picker-btn' aria-label='Open calendar' onclick="eventEndDatePicker.showPicker?eventEndDatePicker.showPicker():eventEndDatePicker.click()"><svg viewBox='0 0 24 24' aria-hidden='true'><path d='M7 2v3M17 2v3M3.5 8h17M5 4.5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-12a2 2 0 0 1 2-2Z'/></svg></button>
+  </div>
+ </div>
+ <div class='field'><label>Event End Time <span class='optional-label'>(Optional)</span></label><input id='eventEndTime' type='text' placeholder='e.g. 5:30 PM' value='${esc(c.endTime?formatEventTime(c.endTime):'')}'></div>
+ <div class='helptext'>If no end time is entered, the event remains active through the end of the selected date.</div>
+ <div class='modalactions'><button type='button' class='btn' onclick='closeModal()'>Cancel</button><button type='button' class='btn' onclick="clearEventDate('${id}')">Clear Date & Time</button><button type='button' class='btn primary' onclick="saveEventDate('${id}')">Save</button></div>`)
+}
+function saveEventDate(id){
+ let c=data.categories.find(x=>x.id===id);if(!c)return;
+ c.endDate=normalizeOptionalDateInput(eventEndDate.value);
+ c.endTime=c.endDate?normalizeOptionalEventTime(eventEndTime.value):null;
+ closeModal();render();
+ toast(c.endDate?'Event end saved':'Event end cleared')
+}
+function clearEventDate(id){
+ let c=data.categories.find(x=>x.id===id);if(!c)return;
+ c.endDate=null;c.endTime=null;
+ closeModal();render();toast('Event end cleared')
+}
+function editCategorySchedule(id){let c=data.categories.find(x=>x.id===id);if(!c)return;modal(`<h2>Reset Schedule</h2><div style='color:var(--muted);margin-bottom:10px'>${esc(c.name)}</div><div class='field'><label>Automatic Reset</label><select id='scheduleMode'>${resetModeOptions(c.resetMode||'manual')}</select></div><div style='color:var(--muted);font-size:12px'>Changing schedules will not immediately clear current progress.</div><div class='modalactions'><button class='btn' onclick='closeModal()'>Cancel</button><button class='btn primary' onclick="saveCategorySchedule('${id}')">Save Schedule</button></div>`)}
+function saveCategorySchedule(id){
+ let c=data.categories.find(x=>x.id===id);if(!c)return;
+ let oldMode=c.resetMode||'manual';
+ c.resetMode=scheduleMode.value;
+ if(oldMode!==c.resetMode)c.streak={current:0};
+ if(!['daily','weekly','monthly'].includes(c.resetMode))c.streakEnabled=false;
+ data.reset['cat_'+id]=currentPeriodKey(c.resetMode);
+ closeModal();render();toast(`${resetModeLabel(c.resetMode)} saved`)
+}
+
+function renameCategory(id){let c=data.categories.find(x=>x.id===id);if(!c)return;modal(`<h2>Rename Category</h2><div class='field'><label>Name</label><input id='catRename' value='${esc(c.name)}'></div><div class='modalactions'><button class='btn' onclick='closeModal()'>Cancel</button><button class='btn primary' onclick="commitRenameCategory('${id}')">Save</button></div>`);setTimeout(()=>catRename.focus(),20)}
+function commitRenameCategory(id){let c=data.categories.find(x=>x.id===id);if(!c)return;let n=catRename.value.trim();if(n)c.name=n;closeModal();render()}
+function deleteCategory(id){requestDelete('category',id)}
+function renderArchives(){let archived=data.categories.filter(c=>c.archived);if(!archived.length){archiveRoot.innerHTML='';return}archiveRoot.innerHTML=`<div class='archivepanel'><div class='archivehead'><h3>Archived Events</h3><span class='meta'>${archived.length}</span></div><div class='archivebody'>${archived.map(c=>`<div class='archiverow'><div class='archivename'><strong>${esc(c.name)}</strong><small>${c.tasks.length} task${c.tasks.length===1?'':'s'}${c.endDate?` · Ended ${formatEventDate(c.endDate)}`:''}</small></div><button class='btn' onclick="restoreArchive('${c.id}')">Restore</button><button type='button' class='btn delete-archive-btn' onclick="event.stopPropagation();requestDelete('archive','${c.id}')">Delete</button></div>`).join('')}</div></div>`}
+function restoreArchive(id){let c=data.categories.find(x=>x.id===id);if(!c)return;c.archived=false;render();toast('Event restored')}
+function deleteArchive(id){requestDelete('archive',id)}
+
+function requestDelete(kind,id,taskId=null){
+ let title='Delete',message='',label='Delete';
+ if(kind==='task'){
+   let [cat,task]=ft(id,taskId);
+   if(!cat||!task){toast('Task not found');return}
+   title='Delete Activity';
+   message=`Delete "${esc(task.name)}"?`;
+ }else if(kind==='category'){
+   const protectedIds=new Set(['daily','weekly','biweekly','monthly','event']);
+   if(protectedIds.has(id)){toast('Built-in categories cannot be deleted');return}
+   let cat=data.categories.find(c=>c.id===id);
+   if(!cat){toast('Category not found');return}
+   title='Delete Category';
+   message=`Delete "${esc(cat.name)}"${cat.tasks.length?` and its ${cat.tasks.length} task${cat.tasks.length===1?'':'s'}`:''}?`;
+ }else if(kind==='archive'){
+   let cat=data.categories.find(c=>c.id===id&&c.archived);
+   if(!cat){toast('Archived event not found');return}
+   title='Delete Archived Event';
+   message=`Permanently delete "${esc(cat.name)}"?`;
+   label='Delete Permanently';
+ }else return;
+
+ modal(`<h2>${title}</h2><div style='color:var(--muted);margin:8px 0 16px'>${message}</div><div class='modalactions'><button type='button' class='btn' onclick='closeModal()'>Cancel</button><button type='button' class='btn primary' id='confirmDeleteBtn'>${label}</button></div>`);
+ const btn=document.getElementById('confirmDeleteBtn');
+ btn.onclick=()=>performDelete(kind,id,taskId);
+}
+function performDelete(kind,id,taskId=null){
+ if(kind==='task'){
+   let cat=data.categories.find(c=>c.id===id);
+   if(!cat){toast('Task category not found');closeModal();return}
+   const before=cat.tasks.length;
+   cat.tasks=cat.tasks.filter(t=>t.id!==taskId);
+   if(cat.tasks.length===before){toast('Task not found');closeModal();return}
+   closeModal();render();toast('Activity deleted');return;
+ }
+ if(kind==='category'){
+   const protectedIds=new Set(['daily','weekly','biweekly','monthly','event']);
+   if(protectedIds.has(id)){toast('Built-in categories cannot be deleted');closeModal();return}
+   const index=data.categories.findIndex(c=>c.id===id);
+   if(index<0){toast('Category not found');closeModal();return}
+   data.categories.splice(index,1);
+   closeModal();render();toast('Category deleted');return;
+ }
+ if(kind==='archive'){
+   const index=data.categories.findIndex(c=>c.id===id&&c.archived);
+   if(index<0){toast('Archived event not found');closeModal();return}
+   data.categories.splice(index,1);
+   closeModal();render();toast('Archived event deleted');return;
+ }
+}
+let activeModal=null;
+function lockBackgroundScroll(){
+ document.documentElement.classList.add('bdat-modal-open');
+ document.body.classList.add('bdat-modal-open')
+}
+function unlockBackgroundScroll(){
+ document.documentElement.classList.remove('bdat-modal-open');
+ document.body.classList.remove('bdat-modal-open')
+}
+function mountModal(h,extraClass=''){
+ if(touchDrag)cancelTouchDrag();
+ if(!modalRoot)return null;
+ modalRoot.innerHTML='';
+ const back=document.createElement('div');
+ back.className='back';
+ const box=document.createElement('div');
+ box.className=('modal '+extraClass).trim();
+ box.innerHTML=h;
+ back.appendChild(box);
+ modalRoot.appendChild(back);
+
+ // Outside-click dismissal must begin AND end on the backdrop.
+ // This prevents text-selection drags from inputs from closing a popup
+ // when the pointer is released outside the modal.
+ let backdropPointerDown=false;
+ back.addEventListener('pointerdown',e=>{
+   backdropPointerDown=e.target===back
+ });
+ back.addEventListener('pointercancel',()=>{backdropPointerDown=false});
+ back.addEventListener('click',e=>{
+   const shouldClose=backdropPointerDown&&e.target===back;
+   backdropPointerDown=false;
+   if(shouldClose)closeModal()
+ });
+
+ activeModal={back,box};
+ lockBackgroundScroll();
+ return box
+}
+function modal(h){return mountModal(h)}
+function closeModal(){
+ if(themePreviewOriginal!==null){
+   themePreviewCurrent=null;
+   document.body.dataset.theme=themePreviewOriginal||data.theme||'nao';
+   themePreviewOriginal=null
+ }
+ if(modalRoot)modalRoot.innerHTML='';
+ activeModal=null;
+ unlockBackgroundScroll();
+ applySettings()
+}
+let addTaskCategoryId=null;
+
+function updateTaskColorPreview(input){
+ const wrap=input?.closest('.task-color-control');
+ if(wrap)wrap.style.setProperty('--task-color-preview',input.value||'#808080')
+}
+function clearTaskColorInput(){
+ const input=document.getElementById('mcolor');
+ if(!input)return;
+ input.dataset.colorCleared='1';
+ input.dataset.colorChanged='0';
+ input.value='#808080';
+ updateTaskColorPreview(input)
+}
+function taskColorInputChanged(el){
+ el.dataset.colorChanged='1';
+ el.dataset.colorCleared='0';
+ updateTaskColorPreview(el)
+}
+function addTask(cid=null){
+ addTaskCategoryId=cid||null;
+ const eligible=data.categories.filter(c=>!c.archived);
+ const fixed=addTaskCategoryId?eligible.find(c=>c.id===addTaskCategoryId):null;
+ modal(`<h2>Add Activity</h2><div class='modal-scroll'>${fixed?``:`<div class='field'><label>Category</label><select id='mcat'>${eligible.map(c=>`<option value='${c.id}'>${esc(c.name)}</option>`).join('')}</select></div>`}<div class='field'><label>Name</label><input id='mname'></div><div class='field'><label>Counter Maximum (Optional)</label><input id='mmax' type='number' min='1'></div><div class='field'><label>Task Color</label><div class='task-color-control' style='--task-color-preview:#808080'><input id='mcolor' type='color' value='#808080' data-color-changed='0' data-color-cleared='0' oninput='taskColorInputChanged(this)'><button type='button' class='clear-task-color' title='Remove Task Color' aria-label='Remove Task Color' onclick='clearTaskColorInput()'>×</button></div></div><div class='field'><label>Note (Optional)</label><textarea id='mnote'></textarea></div></div><div class='modalactions'><button class='btn' onclick='closeModal()'>Cancel</button><button class='btn primary' onclick='commitAdd()'>+Activity</button></div>`);
+ setTimeout(()=>document.getElementById('mname')?.focus(),20)
+}
+function commitAdd(){
+ const n=(document.getElementById('mname')?.value||'').trim();if(!n)return;
+ const categoryId=addTaskCategoryId||(document.getElementById('mcat')?.value||null);
+ const c=data.categories.find(x=>x.id===categoryId);if(!c)return;
+ const maxValue=document.getElementById('mmax')?.value;
+ const x=mk(n,maxValue?Number(maxValue):null);
+ x.note=(document.getElementById('mnote')?.value||'').trim();
+ const addColor=document.getElementById('mcolor');
+ x.color=addColor?.dataset.colorCleared==='1'?null:(addColor?.dataset.colorChanged==='1'?addColor.value:null);
+ c.tasks.push(x);addTaskCategoryId=null;closeModal();render()
+}
+function editTask(c,i){
+ let[cat,x]=ft(c,i);if(!cat||!x)return;
+ const index=cat.tasks.findIndex(t=>t.id===i);
+ modal(`<h2>Edit Activity</h2><div class='modal-scroll'><div class='field'><label>Name</label><input id='mname' value='${esc(x.name)}'></div><div class='row'><div class='field'><label>Counter Maximum</label><input id='mmax' type='number' min='1' value='${x.max||''}'></div><div class='field'><label>Task Color</label><div class='task-color-control' style='--task-color-preview:${x.color||'#808080'}'><input id='mcolor' type='color' value='${x.color||'#808080'}' data-had-color='${x.color?'1':'0'}' data-color-changed='0' data-color-cleared='0' oninput='taskColorInputChanged(this)'><button type='button' class='clear-task-color' title='Remove Task Color' aria-label='Remove Task Color' onclick='clearTaskColorInput()'>×</button></div></div></div><div class='field'><label>Note</label><textarea id='mnote'>${esc(x.note||'')}</textarea></div><div class='field'><label>Move to Category</label><select id='meditcat'>${data.categories.filter(k=>!k.archived).map(k=>`<option value='${k.id}' ${k.id===c?'selected':''}>${esc(k.name)}</option>`).join('')}</select></div><div class='field'><label>Position</label><div style='display:flex;gap:8px;flex-wrap:wrap'><button type='button' class='btn' ${index<=0?'disabled':''} onclick="moveTaskByStep('${c}','${i}',-1)">Move Up</button><button type='button' class='btn' ${index>=cat.tasks.length-1?'disabled':''} onclick="moveTaskByStep('${c}','${i}',1)">Move Down</button></div><small style='display:block;color:var(--muted);margin-top:5px'>Useful on phones where drag-and-drop may be unreliable.</small></div></div><div class='modalactions'><button class='btn' onclick='closeModal()'>Cancel</button><button class='btn primary' onclick="commitEdit('${c}','${i}')">Save</button></div>`)
+}
+function moveTaskByStep(c,i,delta){
+ let[cat,x]=ft(c,i);if(!cat||!x)return;
+ let idx=cat.tasks.findIndex(t=>t.id===i),next=idx+delta;
+ if(next<0||next>=cat.tasks.length)return;
+ [cat.tasks[idx],cat.tasks[next]]=[cat.tasks[next],cat.tasks[idx]];
+ save();closeModal();render();editTask(c,i);toast(delta<0?'Moved up':'Moved down')
+}
+function commitEdit(c,i){
+ let[oldCat,x]=ft(c,i);if(!oldCat||!x)return;
+ x.name=mname.value.trim()||x.name;
+ x.max=mmax.value?Number(mmax.value):null;
+ x.count=x.max?Math.min(x.count||0,x.max):null;
+ x.color=mcolor.dataset.colorCleared==='1'?null:((mcolor.dataset.hadColor==='1'||mcolor.dataset.colorChanged==='1')?mcolor.value:null);x.note=mnote.value.trim();
+ const targetId=meditcat.value;
+ if(targetId!==c){
+   const target=data.categories.find(k=>k.id===targetId);
+   if(target){
+     oldCat.tasks=oldCat.tasks.filter(t=>t.id!==i);
+     target.tasks.push(x)
+   }
+ }
+ closeModal();render();toast(targetId!==c?'Activity updated and moved':'Activity updated')
+}
+function archiveEvent(id){let c=data.categories.find(x=>x.id===id);if(!c)return;modal(`<h2>Archive Event</h2><div style='color:var(--muted);margin-bottom:14px'>Archive "${esc(c.name)}"? Its tasks will stop contributing to active progress, and you can restore it later from Archived Events.</div><div class='modalactions'><button type='button' class='btn' onclick='closeModal()'>Cancel</button><button type='button' class='btn primary' onclick="confirmArchiveEvent('${id}')">Archive</button></div>`)}
+function confirmArchiveEvent(id){let c=data.categories.find(x=>x.id===id);if(!c)return;c.archived=true;closeModal();render();toast('Event archived')}
+
+const THEME_META={
+ nao:{name:'Nao',desc:'Black, pearl white, and azure blue.'},
+ cowenna:{name:'Cowenna',desc:'Deep brown, crimson red, and icy blue.'},
+ eochaid:{name:'Eochaid',desc:'Teal, navy blue, and white.'},
+ loiscneach:{name:'Loiscneach',desc:'Frost blue, charcoal, and snow white.'},
+ rowan:{name:'Rowan',desc:'Lavender purple, white, and violet.'},
+ iolar:{name:'Iolar',desc:'Silver white, sage green, and steel gray.'},
+ matthias:{name:'Matthias',desc:'Steel blue, silver, and black.'},
+ micheil:{name:'Micheil',desc:'Warm brown, slate blue, and ivory.'},
+ taise:{name:'Taise',desc:'Forest green, moss, and plum.'},
+ glora:{name:'Glora',desc:'Royal purple, rose pink, and pearl.'},
+ ater:{name:'Ater',desc:'Black, ember orange, and dark crimson.'}
+};
+let themePreviewOriginal=null;
+let themePreviewCurrent=null;
+function setTheme(theme,persist=true){
+ if(!THEME_META[theme])theme='night';
+ data.theme=theme;
+ document.body.dataset.theme=theme;
+ if(persist)save();
+ updateThemeCards();
+}
+function previewTheme(theme){
+ if(themePreviewOriginal===null)themePreviewOriginal=data.theme||'nao';
+ themePreviewCurrent=theme;
+ document.body.dataset.theme=theme;
+ updateThemeCards(theme);
+}
+function updateThemeCards(activeTheme=null){
+ activeTheme=activeTheme||document.body.dataset.theme||data.theme||'nao';
+ document.querySelectorAll('.themecard').forEach(el=>el.classList.toggle('selected',el.dataset.theme===activeTheme));
+}
+function openThemePicker(){
+ themePreviewOriginal=data.theme||'nao';
+ themePreviewCurrent=null;
+ modal(`<h2>Choose Theme</h2><div style='color:var(--muted);margin-bottom:6px'>Themes only change appearance. Your tasks and settings stay untouched.</div><div class='themecards'>${Object.entries(THEME_META).map(([key,m])=>`<div class='themecard theme-${key} ${key===data.theme?'selected':''}' data-theme='${key}' onclick="previewTheme('${key}')"><strong>${m.name}</strong><small>${m.desc}</small><div class='swatches'><span class='swatch'></span><span class='swatch'></span><span class='swatch'></span></div></div>`).join('')}</div><div class='modalactions'><button class='btn' onclick='cancelThemePicker()'>Cancel</button><button class='btn primary' onclick='applyPreviewedTheme()'>Apply Theme</button></div>`);
+}
+function cancelThemePicker(){
+ themePreviewCurrent=null;
+ document.body.dataset.theme=themePreviewOriginal||data.theme||'nao';
+ themePreviewOriginal=null;
+ closeModal();
+ applySettings();
+}
+function applyPreviewedTheme(){
+ const chosen=themePreviewCurrent||document.body.dataset.theme||themePreviewOriginal||'nao';
+ data.theme=chosen;
+ themePreviewCurrent=null;
+ themePreviewOriginal=null;
+ save();
+ closeModal();
+ render();
+ toast(`${THEME_META[chosen].name} applied`);
+}
+
+
+function buildDefaultTrackerData(){
+ const task=(name,max=null,note='')=>({
+   id:'x'+Math.random().toString(36).slice(2,10),
+   name,
+   done:false,
+   pinned:false,
+   important:false,
+   color:'',
+   note,
+   count:max?0:null,
+   max:max||null
+ });
+
+ return {
+   version:3.5,
+   theme:'nao',
+   settings:{...DEF.settings},
+   reset:{},
+   resetHistory:[],
+   categories:[
+     {
+       id:'daily',name:'Daily',type:'daily',resetMode:'daily',
+       collapsed:false,archived:false,streakEnabled:true,streak:{current:0},endDate:null,endTime:null,
+       tasks:[
+         task('Festia Mini-Games',5),
+         task('Shineseeker Dungeon',null,'3 Soraia + 1 purchase from Soraia'),
+         task('Unlimited Shadow Mission Pass (Adventurer Seal Shop)'),
+         task('Squire Management'),
+         task('Dan Advancement Tests'),
+         task('Grandmaster Missions')
+       ]
+     },
+     {
+       id:'weekly',name:'Weekly',type:'weekly',resetMode:'weekly',
+       collapsed:false,archived:false,streakEnabled:true,streak:{current:0},endDate:null,endTime:null,
+       tasks:[
+         task('Bartering'),
+         task('Crom Bas',10),
+         task('Glenn Bearna',3),
+         task('Guild Missions'),
+         task('Group Commerce'),
+         task('Tech Duinn Solo Passes',10),
+         task('Neartites',10)
+       ]
+     },
+     {
+       id:'biweekly',name:'Biweekly',type:'biweekly',resetMode:'manual',
+       collapsed:false,archived:false,streakEnabled:false,streak:{current:0},endDate:null,endTime:null,
+       tasks:[
+         task('Bartering Crafts')
+       ]
+     },
+     {
+       id:'monthly',name:'Monthly',type:'monthly',resetMode:'monthly',
+       collapsed:false,archived:false,streakEnabled:true,streak:{current:0},endDate:null,endTime:null,
+       tasks:[
+         task('Fahmes Ruin')
+       ]
+     },
+     {
+       id:'events',name:'Event',type:'event',resetMode:'manual',
+       collapsed:false,archived:false,streakEnabled:false,streak:{current:0},endDate:null,endTime:null,
+       tasks:[]
+     }
+   ]
+ }
+}
+function restoreDefaultSettings(){
+ modal(`<h2>Restore Defaults?</h2>
+ <div class='modal-scroll'>
+   <div class='helptext'>
+     This will reset BDAT to its default configuration. Your custom categories, tasks, task colors, notes, pins, importance, theme choice, streak state, and other configuration changes will be removed.
+   </div>
+ </div>
+ <div class='modalactions'>
+   <button type='button' class='btn' onclick='closeModal();openSettings()'>Cancel</button>
+   <button type='button' class='btn danger' onclick='confirmRestoreDefaults()'>Restore Defaults</button>
+ </div>`)
+}
+function confirmRestoreDefaults(){
+ data=buildDefaultTrackerData();
+ save();
+ closeModal();
+ render();
+ toast('BDAT restored to defaults')
+}
+function openSettings(){
+ const items=[
+  ['dashboard','Dashboard','Show the overview cards at the top.'],
+  ['countdown','Reset countdown','Show Daily, Weekly, and Monthly reset timers.'],
+  ['progress','Progress summary','Show the overall completion card.'],
+  ['search','Search bar','Show instant search above the categories.'],
+  ['dragHints','Drag hints','Show drag-and-drop helper text inside categories.'],
+  ['resetHistory','Reset history','Show the History shortcut on the reset panel.'],
+  ['counters','Task counters','Show optional numeric counters on supported tasks.'],
+  ['notes','Task notes','Show saved notes underneath activities.'],
+  ['animations','Animations','Enable smooth scrolling, transitions, and visual motion.']
+ ];
+ modal(`<h2>Settings</h2>
+ <div class='modal-scroll'>
+   <div style='display:grid;gap:8px'>${items.map(([k,label,desc])=>`<label style='display:flex;align-items:flex-start;gap:10px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--taskTint)'><input id='s_${k}' type='checkbox' ${data.settings[k]?'checked':''} style='margin-top:3px'><span><strong style='display:block'>${label}</strong><small style='color:var(--muted)'>${desc}</small></span></label>`).join('')}</div>
+ </div>
+ <div class='modalactions'><button type='button' class='btn' onclick='restoreDefaultSettings()'>Restore Defaults</button><button class='btn' onclick='closeModal()'>Cancel</button><button class='btn primary' onclick='saveSettings()'>Save Settings</button></div>`)
+}
+function saveSettings(){
+ ['dashboard','countdown','progress','search','dragHints','resetHistory','counters','notes','animations'].forEach(k=>{
+   const el=document.getElementById('s_'+k);
+   if(el)data.settings[k]=el.checked
+ });
+ closeModal();render();toast('Settings saved')
+}
+const PROFILE_FORMAT='BDAT1';
+function profileEnvelope(){
+ return {format:'BDAT',formatVersion:1,appVersion:data.version||3.5,exportedAt:new Date().toISOString(),data}
+}
+function encodeProfileEnvelope(obj){
+ return PROFILE_FORMAT+':'+btoa(unescape(encodeURIComponent(JSON.stringify(obj))))
+}
+function exportCode(){return encodeProfileEnvelope(profileEnvelope())}
+function decodeProfileCode(code){
+ code=(code||'').trim();
+ if(!code)throw new Error('Paste a profile code first.');
+ let raw,parsed;
+ try{
+   if(code.startsWith(PROFILE_FORMAT+':')){
+     raw=code.slice(PROFILE_FORMAT.length+1);
+     parsed=JSON.parse(decodeURIComponent(escape(atob(raw))));
+     if(!parsed||parsed.format!=='BDAT'||parsed.formatVersion!==1||!parsed.data)throw new Error('This profile code uses an unsupported format.');
+     return parsed.data
+   }
+   // Legacy Alpha/Beta profile codes remain supported.
+   parsed=JSON.parse(decodeURIComponent(escape(atob(code))));
+   return parsed
+ }catch(err){
+   if(err&&err.message&&err.message!=='Invalid character')throw err;
+   throw new Error('That profile code is malformed or incomplete.')
+ }
+}
+function validateProfileData(x){
+ if(!x||typeof x!=='object')throw new Error('The profile does not contain tracker data.');
+ if(!Array.isArray(x.categories))throw new Error('The profile is missing its category list.');
+ if(x.categories.length>200)throw new Error('The profile contains too many categories to import safely.');
+ for(const c of x.categories){
+   if(!c||typeof c!=='object'||typeof c.name!=='string'||!Array.isArray(c.tasks))throw new Error('The profile contains an invalid category.');
+   if(c.tasks.length>2000)throw new Error(`"${c.name}" contains too many activities to import safely.`);
+   for(const t of c.tasks){
+     if(!t||typeof t!=='object'||typeof t.name!=='string')throw new Error(`"${c.name}" contains an invalid activity.`);
+   }
+ }
+ return x
+}
+async function copyProfileCode(){
+ const area=document.getElementById('profileCode');
+ const btn=document.getElementById('copyProfileBtn');
+ if(!area||!btn)return;
+ let copied=false;
+ try{
+   if(navigator.clipboard&&window.isSecureContext){
+     await navigator.clipboard.writeText(area.value);
+     copied=true
+   }
+ }catch{}
+ if(!copied){
+   area.focus();area.select();area.setSelectionRange(0,area.value.length);
+   try{copied=document.execCommand('copy')}catch{}
+ }
+ if(copied){
+   const old=btn.textContent;btn.textContent='Copied ✓';btn.disabled=true;
+   toast('Profile code copied');
+   setTimeout(()=>{if(document.getElementById('copyProfileBtn')){btn.textContent=old;btn.disabled=false}},1400)
+ }else{
+   area.focus();area.select();
+   toast('Select the code and copy it manually')
+ }
+}
+function openProfile(){
+ modal(`<h2>Share / Import Profile</h2><div class='modal-scroll'><div class='field'><label>Shareable Profile Code</label><textarea id='profileCode' rows='7' spellcheck='false'>${exportCode()}</textarea></div><div style='margin-top:8px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:var(--taskTint);color:var(--muted);font-size:var(--help-font-size);line-height:var(--help-line-height);line-height:1.45'><strong style='color:var(--text)'>Backup tip:</strong> Save your Profile Code somewhere safe if you've customized your tracker. It can restore your setup on another browser or device if local browser data is cleared or unavailable.</div><div style='margin-top:8px;color:var(--muted);font-size:var(--help-font-size)'>Code format: BDAT1. Older tracker profile codes are still accepted.</div></div><div class='modalactions'><button type='button' class='btn' id='copyProfileBtn' onclick='copyProfileCode()'>Copy</button><button type='button' class='btn primary' onclick='importCode()'>Import Pasted Code</button></div>`)
+}
+function importCode(){
+ try{
+   const x=validateProfileData(decodeProfileCode(profileCode.value));
+   data=migrateData(x);
+   initializeResetBaselines();
+   closeModal();render();toast('Profile imported')
+ }catch(err){
+   const message=err&&err.message?err.message:'That profile code could not be read.';
+   toast(message);
+   const area=document.getElementById('profileCode');
+   if(area){area.focus();area.setSelectionRange(0,area.value.length)}
+ }
+}
+function jumpToCategory(id){
+ let c=data.categories.find(x=>x.id===id);
+ if(!c)return;
+ c.collapsed=false;
+ search.value="";
+ render();
+ setTimeout(()=>{
+   const el=document.querySelector(`[data-cat="${id}"]`);
+   if(!el)return;
+   const y=el.getBoundingClientRect().top+window.scrollY-16;
+   window.scrollTo({top:y,behavior:data.settings.animations?"smooth":"auto"});
+   el.animate(
+     [{boxShadow:"0 0 0 rgba(201,161,90,0)"},{boxShadow:"0 0 0 3px rgba(201,161,90,.45)"},{boxShadow:"0 12px 28px rgba(0,0,0,.38)"}],
+     {duration:900,easing:"ease-out"}
+   );
+ },30);
+}
+function updateDashboard(){let a=allTasks(),d=a.filter(x=>x.done).length,p=a.length?Math.round(d/a.length*100):0;overallBar.style.width=p+'%';overallText.textContent=`${d} / ${a.length} complete`;overallPct.textContent=p+'%';let pins=a.filter(x=>x.pinned&&!x.done).slice(0,4);quickView.innerHTML=pins.length?pins.map(x=>'📌 '+esc(x.name)).join('<br>'):'No unfinished pinned tasks.'}
+function manualReset(type){
+ let cats=data.categories.filter(c=>c.id===type||c.resetMode===type);
+ if(!cats.length){toast('No matching categories');return}
+ modal(`<h2>Manual Reset</h2><div style='color:var(--muted);margin-bottom:14px'>Reset ${cats.length===1?`"${esc(cats[0].name)}"`:`${cats.length} matching categories`}? This clears checkmarks and counters only.</div><div class='modalactions'><button type='button' class='btn' onclick='closeModal()'>Cancel</button><button type='button' class='btn primary' onclick="confirmManualReset('${type}')">Reset</button></div>`)
+}
+function confirmManualReset(type){
+ let cats=data.categories.filter(c=>c.id===type||c.resetMode===type);
+ cats.forEach(c=>{clearCategoryProgress(c);recordReset(c,'manual');if((c.resetMode||'manual')!=='manual')data.reset['cat_'+c.id]=currentPeriodKey(c.resetMode)});
+ closeModal();render();save();toast('Manual reset complete')
+}
+function fc(){let q=(window.cmdSearch?.value||'').toLowerCase();return commands.filter(x=>x[0].toLowerCase().includes(q)||x[2].toLowerCase().includes(q))}
+function pacificDate(Y,M,D,H=7){
+ let guess=new Date(Date.UTC(Y,M,D,H));
+ for(let i=0;i<3;i++){
+   let p=new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(guess),
+       z=Object.fromEntries(p.map(x=>[x.type,x.value])),
+       shown=Date.UTC(+z.year,+z.month-1,+z.day,+z.hour,+z.minute),
+       want=Date.UTC(Y,M,D,H);
+   guess=new Date(guess.getTime()+want-shown)
+ }
+ return guess
+}
+function pacificParts(date=new Date()){
+ let p=new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).formatToParts(date);
+ return Object.fromEntries(p.map(x=>[x.type,x.value]))
+}
+function firstThursday(Y,M){
+ let first=pacificDate(Y,M,1),p=pacificParts(first),w={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6}[p.weekday];
+ return pacificDate(Y,M,1+(4-w+7)%7)
+}
+function latestReset(mode,now=new Date()){
+ let z=pacificParts(now),y=+z.year,m=+z.month-1,d=+z.day,w={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6}[z.weekday];
+ if(mode==='daily'){let t=pacificDate(y,m,d);return t<=now?t:pacificDate(y,m,d-1)}
+ if(mode==='weekly'){let back=(w-4+7)%7,t=pacificDate(y,m,d-back);return t<=now?t:pacificDate(y,m,d-back-7)}
+ if(mode==='monthly'){let t=firstThursday(y,m);return t<=now?t:firstThursday(y,m-1)}
+ return null
+}
+function nextReset(mode,now=new Date()){
+ let z=pacificParts(now),y=+z.year,m=+z.month-1,d=+z.day,w={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6}[z.weekday],t;
+ if(mode==='daily'){t=pacificDate(y,m,d);if(t<=now)t=pacificDate(y,m,d+1);return t}
+ if(mode==='weekly'){let add=(4-w+7)%7;t=pacificDate(y,m,d+add);if(t<=now)t=pacificDate(y,m,d+add+7);return t}
+ if(mode==='monthly'){t=firstThursday(y,m);if(t<=now)t=firstThursday(y,m+1);return t}
+ return null
+}
+function currentPeriodKey(mode){let r=latestReset(mode);return r?r.toISOString():'manual'}
+
+function recordReset(c,source){
+ data.resetHistory=Array.isArray(data.resetHistory)?data.resetHistory:[];
+ data.resetHistory.unshift({
+   id:'r'+Math.random().toString(36).slice(2,10),
+   categoryId:c.id,
+   categoryName:c.name,
+   mode:c.resetMode||'manual',
+   source,
+   at:new Date().toISOString()
+ });
+ data.resetHistory=data.resetHistory.slice(0,50)
+}
+function formatResetHistoryTime(iso){
+ let d=new Date(iso);
+ if(Number.isNaN(d.getTime()))return '';
+ return new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}).format(d)
+}
+function openResetHistory(){
+ let rows=(data.resetHistory||[]);
+ modal(`<h2>Reset History</h2><div style='color:var(--muted);margin-bottom:10px'>Shows the most recent automatic and manual checklist resets on this browser.</div><div class='resethistory'>${rows.length?rows.map(r=>`<div class='historyrow'><div><strong>${esc(r.categoryName||'Unknown category')}</strong><small>${r.source==='automatic'?'Automatic':'Manual'} · ${resetModeLabel(r.mode||'manual')}</small></div><div class='historytime'>${esc(formatResetHistoryTime(r.at))}</div></div>`).join(''):`<div style='color:var(--muted);padding:16px 0'>No resets have been recorded yet.</div>`}</div><div class='modalactions'><button type='button' class='btn' onclick='clearResetHistory()'>Clear History</button><button type='button' class='btn primary' onclick='closeModal()'>Done</button></div>`)
+}
+function clearResetHistory(){
+ if(!(data.resetHistory||[]).length){closeModal();return}
+ modal(`<h2>Clear Reset History</h2><div style='color:var(--muted);margin-bottom:14px'>Clear the local reset log? This does not affect any activities or reset schedules.</div><div class='modalactions'><button type='button' class='btn' onclick='openResetHistory()'>Cancel</button><button type='button' class='btn primary' onclick='confirmClearResetHistory()'>Clear</button></div>`)
+}
+function confirmClearResetHistory(){data.resetHistory=[];save();closeModal();toast('Reset history cleared')}
+
+function streakUnit(mode,count=1){
+ const unit=mode==='daily'?'day':mode==='weekly'?'week':mode==='monthly'?'month':'period';
+ return count===1?unit:unit+'s'
+}
+function streakEligible(c){
+ return !c.archived&&c.streakEnabled===true&&['daily','weekly','monthly'].includes(c.resetMode)&&c.tasks.length>0
+}
+function categoryWasComplete(c){
+ return c.tasks.length>0&&c.tasks.every(t=>t.done||(t.max&&Number(t.count)>=Number(t.max)))
+}
+function resetPeriodsElapsed(mode,previousKey,currentKey){
+ let prev=new Date(previousKey),curr=new Date(currentKey);
+ if(Number.isNaN(prev.getTime())||Number.isNaN(curr.getTime())||prev>=curr)return 0;
+ let count=0,cursor=prev;
+ while(count<400&&cursor<curr){
+   cursor=nextReset(mode,new Date(cursor.getTime()+1000));
+   if(!cursor)break;
+   count++
+ }
+ return count
+}
+function processCategoryStreak(c,previousKey,currentKey){
+ if(!streakEligible(c))return;
+ if(!c.streak)c.streak={current:0};
+
+ const complete=categoryWasComplete(c);
+ const periods=Math.max(1,resetPeriodsElapsed(c.resetMode,previousKey,currentKey));
+
+ if(periods===1){
+   c.streak.current=complete?(c.streak.current||0)+1:0
+ }else{
+   // A gap spanning multiple reset periods cannot remain an active streak.
+   c.streak.current=0
+ }
+}
+function fireElementIconHtml(){
+ return `<span class='firefallback firefallback-visible' aria-hidden='true'><svg viewBox='0 0 24 24'><path fill='#f07b2f' d='M13.7 2.4c.7 3-1.2 4.7-2.6 6.2-1.3 1.4-2.2 2.6-1.6 4.4.6-1.1 1.4-1.8 2.4-2.6-.2 2.3 1.8 3.3 1.8 5.6 0 2.1-1.6 3.7-3.7 3.7-3.7 0-6.1-2.7-6.1-6.2 0-3.9 2.7-6.1 5.1-8.4.3 1.6.3 2.9.1 4.1 1.2-1.3 2.4-2.5 3.2-4.1.8-1.6 1.2-3.1 1.4-4.7Z'/><path fill='#ffd26a' d='M11.8 13.2c.3 1.5-.8 2.3-1.5 3.1-.7.8-1.1 1.5-.7 2.5-1.5-.2-2.5-1.4-2.5-3 0-1.8 1.1-3 2.5-4.4.2.9.2 1.7.1 2.3.8-.9 1.4-1.6 2.1-2.7v2.2Z'/></svg></span>`
+}
+
+
+function categoryGemHtml(c){
+ const palette={
+   daily:['#2bd45a','#0a7c30','#9dffb5'],
+   weekly:['#32aef4','#116ba9','#b8eaff'],
+   biweekly:['#a55bf2','#6530aa','#dfc0ff'],
+   monthly:['#f2b334','#a8690d','#ffe18a'],
+   event:['#ef4d3e','#9e211a','#ffb2aa']
+ };
+ const p=palette[c.type]||palette.daily;
+ return `<span class='catgem' aria-hidden='true'><svg viewBox='0 0 24 32'><polygon points='12,1 21,9 18,25 12,31 6,25 3,9' fill='${p[1]}' stroke='${p[2]}' stroke-width='1'/><polygon points='12,2 12,30 6,24 4,10' fill='${p[0]}' opacity='.92'/><polygon points='12,2 20,10 12,14 4,10' fill='${p[2]}' opacity='.78'/><polygon points='12,14 20,10 17,24 12,30' fill='${p[1]}' opacity='.9'/><path d='M12 2v28M4 10l8 4 8-4' fill='none' stroke='rgba(255,255,255,.35)' stroke-width='.7'/></svg></span>`
+}
+function categoryStreakHtml(c){
+ if(!streakEligible(c))return '';
+ const cur=c.streak?.current||0;
+ if(cur<=0)return '';
+ const currentText=`${cur} streak`;
+ return `<span class='catstreak active' aria-label='${esc(currentText)}'>${fireElementIconHtml()}<span>${esc(currentText)}</span></span>`
+}
+
+
+function clearCategoryProgress(c){c.tasks.forEach(x=>{x.done=false;if(x.max)x.count=0})}
+function initializeResetBaselines(){
+ data.categories.forEach(c=>{
+   let mode=c.resetMode||'manual',key='cat_'+c.id;
+   if(mode!=='manual'&&!data.reset[key])data.reset[key]=currentPeriodKey(mode)
+ });
+ save()
+}
+function autoReset(){
+ let changed=false;
+ data.categories.forEach(c=>{
+   let mode=c.resetMode||'manual';
+   if(mode==='manual'||c.archived)return;
+   let key='cat_'+c.id,current=currentPeriodKey(mode);
+   if(!data.reset[key]){data.reset[key]=current;changed=true;return}
+   if(data.reset[key]!==current){
+     processCategoryStreak(c,data.reset[key],current);
+     clearCategoryProgress(c);
+     recordReset(c,'automatic');
+     data.reset[key]=current;
+     changed=true;
+     toast(`${c.name} reset`)
+   }
+ });
+ if(changed)save()
+}
+function fmt(ms){let s=Math.max(0,Math.floor(ms/1000)),d=Math.floor(s/86400);s%=86400;let h=Math.floor(s/3600),m=Math.floor((s%3600)/60);return(d?d+'d ':'')+h+'h '+m+'m'}
+function resetStatus(mode,now=new Date()){
+ let ms=nextReset(mode,now)-now;
+ if(ms<=3600000)return {text:'Resets within 1 hour',soon:true};
+ if(ms<=21600000)return {text:'Resets today',soon:true};
+ if(mode==='daily')return {text:'Every day at 7:00 AM PT',soon:false};
+ if(mode==='weekly')return {text:'Thursday at 7:00 AM PT',soon:false};
+ if(mode==='monthly')return {text:'First Thursday at 7:00 AM PT',soon:false};
+ return {text:'Manual',soon:false}
+}
+function updateResetChip(mode,countId,statusId,chipId,now){
+ let next=nextReset(mode,now),status=resetStatus(mode,now),chip=document.getElementById(chipId);
+ document.getElementById(countId).textContent=fmt(next-now);
+ document.getElementById(statusId).textContent=status.text;
+ chip.classList.toggle('soon',status.soon)
+}
+function tick(){
+ let n=new Date();
+ updateResetChip('daily','rDaily','sDaily','chipDaily',n);
+ updateResetChip('weekly','rWeekly','sWeekly','chipWeekly',n);
+ updateResetChip('monthly','rMonthly','sMonthly','chipMonthly',n)
+}
+initializeResetBaselines();autoReset();render();applySettings();tick();setInterval(()=>{autoReset();tick();render()},30000)
+</script></body></html>
